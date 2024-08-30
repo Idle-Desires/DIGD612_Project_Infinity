@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 look;
     private bool jump;
     private bool crouch;
+    private bool attack;
 
     //Variables to adjust player movement speed, look speed, jump force, crouch and jump cooldown
     public float moveSpeed = 5f;
@@ -36,10 +37,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
 
-    //Jump cooldown time variable
-    //private float jumpTimer;
+    //Ready to jump detection variable and game object collider
     private bool readyToJump = true;
-    private CapsuleCollider collider; // To change the player's height
+    new CapsuleCollider collider; // To change the player's height //private start to new at front so test
 
     private void Awake()
     {
@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
         // Get the main camera's transform
         cameraTransform = Camera.main.transform;
 
-        //Setup the move action to update once the input for the move vector is detected and reset the move vector
+        //Setup the move action to update once the input for the move vector is detected and reset the move vector (ctx = context)
         inputActions.Player.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
         inputActions.Player.Move.canceled += ctx => move = Vector2.zero;
 
@@ -63,9 +63,13 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Jump.performed += ctx => jump = true;
         inputActions.Player.Jump.canceled += ctx => jump = false;
 
-        // Crouch input
+        //Crouch input
         inputActions.Player.Crouch.performed += ctx => crouch = true;
         inputActions.Player.Crouch.canceled += ctx => crouch = false;
+
+        //Attack input
+        //inputActions.Player.Attack.performed += ctx => attack = true;
+        //inputActions.Player.Attack.canceled += ctx => attack = false;
     }
 
     private void OnEnable()
@@ -90,9 +94,6 @@ public class PlayerController : MonoBehaviour
         //Check if player is on the ground
         isGrounded = IsGrounded();
 
-        // Handle jump cooldown
-        //jumpTimer -= Time.deltaTime;
-
         //Jump if player is on ground and jump input pressed
         if (jump && readyToJump && isGrounded)
         {
@@ -100,8 +101,6 @@ public class PlayerController : MonoBehaviour
             readyToJump = false;
             Invoke(nameof(ResetJump), jumpCooldown); // Cooldown before next jump
         }
-
-        //jump = false; //maybe
 
         HandleCrouch(); // Handle crouch state
 
@@ -175,7 +174,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        //Vertical velocity set for jumpping
+        //Vertical velocity set for jumping
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);//Edit to be able to jump whilst moving (old GetComponent<Rigidbody>().velocity)
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
