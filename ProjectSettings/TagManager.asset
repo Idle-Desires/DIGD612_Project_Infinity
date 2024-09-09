@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - HitScan
+  - Projectile
+  - Bullet
+  - Ground
   layers:
   - Default
   - TransparentFX

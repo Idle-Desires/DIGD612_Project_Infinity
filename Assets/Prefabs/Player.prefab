@@ -179,11 +179,9 @@ GameObject:
   m_Component:
   - component: {fileID: 392880022286030773}
   - component: {fileID: 8568946735594311890}
-  - component: {fileID: 8749657889480994457}
-  - component: {fileID: 463208938714855180}
   m_Layer: 7
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -233,70 +231,3 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
---- !u!114 &8749657889480994457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7889607672603893021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97990f51e036ab64ca96db43f157e2e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 7
-  groundDrag: 5
-  wallrunSpeed: 8.5
-  playerHeight: 2
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 64
-  grounded: 0
-  orientation: {fileID: 5970447286794903055}
-  movement: {x: 0, y: 0}
-  jumpForce: 5
-  jumpCooldown: 0.25
-  airMultiplier: 0.4
-  crouchSpeed: 3.5
-  crouchYScale: 0.5
-  escapeKey: 27
-  jumpKey: 32
-  jumpCKey: 330
-  crouchKey: 306
-  interactKey: 101
-  state: 0
-  crouching: 0
-  wallrunning: 0
---- !u!114 &463208938714855180
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7889607672603893021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf81499346576f41bdd2c708853670a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  whatIsWall:
-    serializedVersion: 2
-    m_Bits: 64
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 64
-  wallRunForce: 20
-  wallJumpUpForce: 0
-  wallJumpSideForce: 0
-  wallClimbSpeed: 0
-  maxWallRunTime: 1.5
-  jumpKey: 32
-  upwardsRunKey: 304
-  downwardsRunKey: 306
-  wallCheckDistance: 0.7
-  minJumpHeight: 2
-  exitWallTime: 0
-  useGravity: 0
-  gravityCounterForce: 0
-  orientation: {fileID: 5970447286794903055}

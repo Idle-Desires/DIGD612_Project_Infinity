@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
 public class WeaponsController : MonoBehaviour
 {
-    //Reference to the input actions created under PlayerInputActions and Rigidbody component
+    //Reference to the input actions created under PlayerInputActions
     private PlayerInputActions inputActions;
 
-    //Weapon and player related variables
+    public EnemyStats enemy;
+
+    //Type of gun being held
+    public string gunName;
+
+    //Bullet
+    private GameObject currentBullet;       // Reference to the current bullet
+
+    //Input
     private bool attack;
     private bool reload;
 
@@ -19,9 +28,6 @@ public class WeaponsController : MonoBehaviour
     public float fireRate = 15f;
     public float impactForce = 5f;
     private float nextTimeToFire = 0f;
-
-    //Reticle variable
-    public Camera fpscam;
 
     //Gun variables
     public int magazineSize;
@@ -40,22 +46,46 @@ public class WeaponsController : MonoBehaviour
     //References to other game objects in the scene
     public RaycastHit rayHit;
 
+    //Projectile gun
+    public GameObject bulletPrefab;    // The bullet prefab
+    public Transform bulletSpawnPoint; // The point where bullets will spawn
+    public float bulletSpeed = 60f;    // Speed of the bullet
+
+    //Graphics
+    public TextMeshProUGUI ammoDisplay;
+
+    //Camera
+    public Camera fpsCam;
+    PhotonView photonView;
+
     //Initialize at the start of the game
     private void Awake()
     {
-        bulletsLeft = magazineSize;
-        //readyToShoot = true;
+        //PhotonView check
+        photonView = GetComponent<PhotonView>();
 
-        //Initialize the input actions, ridigbody and collider
-        inputActions = new PlayerInputActions();
+        if (photonView.IsMine)
+        {
+            bulletsLeft = magazineSize;
+            //readyToShoot = true;
 
-        //Attack input
-        inputActions.Player.Attack.performed += ctx => attack = true;
-        inputActions.Player.Attack.canceled += ctx => attack = false;
+            ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
 
-        //Reload input
-        inputActions.Player.Reload.performed += ctx => reload = true;
-        inputActions.Player.Reload.canceled += ctx => reload = false;
+            //Initialize the input actions, ridigbody and collider
+            inputActions = new PlayerInputActions();
+
+            //Attack input
+            inputActions.Player.Attack.performed += ctx => attack = true;
+            inputActions.Player.Attack.canceled += ctx => attack = false;
+
+            //Reload input
+            inputActions.Player.Reload.performed += ctx => reload = true;
+            inputActions.Player.Reload.canceled += ctx => reload = false;
+        }
+        else
+        {
+            enabled = false;
+        }
     }
 
     private void OnEnable()
@@ -73,9 +103,21 @@ public class WeaponsController : MonoBehaviour
     //Checking states for shooting or reloading the gun
    public void Update()
     {
+        //Set ammo display 
+        if (ammoDisplay != null)
+        {
+            ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
+        }
+
         if (reload && bulletsLeft < magazineSize && !reloading)
         {
             Debug.Log("Reloading");
+            Reload();
+        }
+
+        if (bulletsLeft == 0 && !reloading)
+        {
+            Debug.Log("Auto Reloading");
             Reload();
         }
 
@@ -83,8 +125,22 @@ public class WeaponsController : MonoBehaviour
         {
             nextTimeToFire = Time.time + 1f / fireRate;
             bulletsShot = bulletsPerShot;
-            Shoot();
+
+            //Different shooting mechanics trying to see if it picks up the gameobject with the right operation
+            if(gameObject.tag == "HitScan")
+            {
+                Debug.Log("HitScan");
+                Shoot();
+            }
+            else
+            {
+                Debug.Log("Projectile");
+                ProjectileShot();
+                //DestroyImmediate(bulletPrefab,true);
+            }
         }
+
+
     }
 
     //What happens when the player shots the gun
@@ -94,7 +150,7 @@ public class WeaponsController : MonoBehaviour
         //readyToShoot = false;
         Debug.Log(bulletsLeft + " / " + magazineSize);
 
-        if (Physics.Raycast(fpscam.transform.position, fpscam.transform.forward, out rayHit, range))
+        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out rayHit, range))
         {
             Debug.Log(rayHit.transform.name);
 
@@ -114,21 +170,37 @@ public class WeaponsController : MonoBehaviour
         //Keeping track of how many bullets the user has left
         bulletsLeft--;
         bulletsShot--;
-
-        //Delay to calling the reset function for shooting
-        Invoke("ResetShot", timeBetweenShooting);
-
-        if (bulletsShot > 0 && bulletsLeft > 0)
-        {
-            Invoke("Shoot", timeBetweenShots);
-        }
     }
 
-    //Reset state to be able to shoot. Will be looked into for improving the guns
-    //private void ResetShot()
-    //{
-    //    readyToShoot = true;
-    //}
+    void ProjectileShot()
+    {
+        Debug.Log(bulletsLeft + " / " + magazineSize);
+
+        // Destroy the current bullet if it exists
+        if (currentBullet != null)
+        {
+            Destroy(currentBullet,0.5f);
+        }
+
+        // Instantiate the bullet at the spawn point
+        currentBullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+
+        // Get the Rigidbody component from the bullet and apply force to shoot it forward
+        Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.AddForce(bulletSpawnPoint.forward * bulletSpeed, ForceMode.Impulse);
+        }
+
+        bulletsLeft--;
+        bulletsShot++;
+
+        //if (bulletsShot > 0 && bulletsLeft > 0)
+        //{
+        //    Invoke("Shoot", timeBetweenShots);
+        //}
+    }
 
     //Changes the state and calls method to reset variables
     private void Reload()
@@ -142,5 +214,11 @@ public class WeaponsController : MonoBehaviour
     {
         bulletsLeft = magazineSize;
         reloading = false;
+    }
+
+    //If the bullet hits anything with a RB it will be destroyed
+    void OnCollisionEnter(Collision collision)//for 3D RB add 2D for other rb option
+    {
+        Destroy(currentBullet, 0.5f);
     }
 }

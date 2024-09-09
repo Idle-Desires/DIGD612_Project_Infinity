@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,7 +13,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 look;
     private bool jump;
     private bool crouch;
-    private bool attack;
 
     //Variables to adjust player movement speed, look speed, jump force, crouch and jump cooldown
     public float moveSpeed = 5f;
@@ -29,47 +27,61 @@ public class PlayerController : MonoBehaviour
 
     //Camera references
     private Transform cameraTransform;
+    //private Camera playerCamera;
     private float cameraVertical = 0f;  // Vertical rotation
     private float cameraHorizontal = 0f;    // Horizontal rotation
+    [SerializeField] GameObject playerCam;
 
     //Specify what the ground layer is for the items in inspector view and a layermask
     [SerializeField] private bool isGrounded;
     public LayerMask groundLayer;
-    public Transform groundCheck;
 
     //Ready to jump detection variable and game object collider
     private bool readyToJump = true;
-    new CapsuleCollider collider; // To change the player's height //private start to new at front so test
+    new CapsuleCollider collider; //To change the player's height //private start to new at front so test
+
+    //Multiplayer values
+    PhotonView photonView;
 
     private void Awake()
     {
-        //Initialize the input actions, ridigbody and collider
-        inputActions = new PlayerInputActions();
-        rb = GetComponent<Rigidbody>();
-        collider = GetComponent<CapsuleCollider>();
+        //PhotonView check
+        photonView = GetComponent<PhotonView>();
 
-        // Get the main camera's transform
-        cameraTransform = Camera.main.transform;
+        if (photonView.IsMine)
+        {
+            //Initialize the input actions, ridigbody and collider
+            inputActions = new PlayerInputActions();
+            rb = GetComponent<Rigidbody>();
+            collider = GetComponent<CapsuleCollider>();
+            playerCam.SetActive(true);
 
-        //Setup the move action to update once the input for the move vector is detected and reset the move vector (ctx = context)
-        inputActions.Player.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
-        inputActions.Player.Move.canceled += ctx => move = Vector2.zero;
+            //Locking camera
+            Cursor.lockState = CursorLockMode.Locked; //Middle of screen lock
 
-        //Setup the look action to update once the input for the look vector is detected and reset the look vector
-        inputActions.Player.Look.performed += ctx => look = ctx.ReadValue<Vector2>();
-        inputActions.Player.Look.canceled += ctx => look = Vector2.zero;
+            // Get the main camera's transform
+            cameraTransform = Camera.main.transform;
 
-        //Setup the jump action to update once the input for the jump variable is detected by being set to true and reset the jump by setting to false
-        inputActions.Player.Jump.performed += ctx => jump = true;
-        inputActions.Player.Jump.canceled += ctx => jump = false;
+            //Setup the move action to update once the input for the move vector is detected and reset the move vector (ctx = context)
+            inputActions.Player.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
+            inputActions.Player.Move.canceled += ctx => move = Vector2.zero;
 
-        //Crouch input
-        inputActions.Player.Crouch.performed += ctx => crouch = true;
-        inputActions.Player.Crouch.canceled += ctx => crouch = false;
+            //Setup the look action to update once the input for the look vector is detected and reset the look vector
+            inputActions.Player.Look.performed += ctx => look = ctx.ReadValue<Vector2>();
+            inputActions.Player.Look.canceled += ctx => look = Vector2.zero;
 
-        //Attack input
-        //inputActions.Player.Attack.performed += ctx => attack = true;
-        //inputActions.Player.Attack.canceled += ctx => attack = false;
+            //Setup the jump action to update once the input for the jump variable is detected by being set to true and reset the jump by setting to false
+            inputActions.Player.Jump.performed += ctx => jump = true;
+            inputActions.Player.Jump.canceled += ctx => jump = false;
+
+            //Crouch input
+            inputActions.Player.Crouch.performed += ctx => crouch = true;
+            inputActions.Player.Crouch.canceled += ctx => crouch = false;
+        }
+        else
+        {
+            enabled = false;
+        }
     }
 
     private void OnEnable()
@@ -78,11 +90,11 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Enable();
     }
 
-    private void OnDisable()
-    {
-        // Disable the Player input action map
-        inputActions.Player.Disable();
-    }
+    //private void OnDisable()
+    //{
+    //     // Disable the Player input action map
+    //     inputActions.Player.Disable();
+    //}
 
     private void Update()
     {
@@ -97,9 +109,9 @@ public class PlayerController : MonoBehaviour
         //Jump if player is on ground and jump input pressed
         if (jump && readyToJump && isGrounded)
         {
-            Jump();
-            readyToJump = false;
-            Invoke(nameof(ResetJump), jumpCooldown); // Cooldown before next jump
+           Jump();
+           readyToJump = false;
+           Invoke(nameof(ResetJump), jumpCooldown); // Cooldown before next jump
         }
 
         HandleCrouch(); // Handle crouch state
@@ -130,14 +142,10 @@ public class PlayerController : MonoBehaviour
         //Movement vector based on the input and camera direction
         Vector3 movement = cameraForward * move.y + cameraRight * move.x;
 
-        //Move the player where the camera is looking
-        //transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
+        //Use crouch speed if crouching
+        float speed = crouch ? crouchSpeed : moveSpeed; 
 
-        float speed = crouch ? crouchSpeed : moveSpeed; // Use crouch speed if crouching
-        //transform.Translate(movement * speed * Time.deltaTime, Space.World);
-
-        //rb.MovePosition(transform.position + movement * moveSpeed * Time.deltaTime);
-
+        //Checking ground state
         if (isGrounded)
         {
             rb.AddForce(movement.normalized * moveSpeed * 5f, ForceMode.Force);// Original 10f
@@ -152,6 +160,7 @@ public class PlayerController : MonoBehaviour
     {
         // Update the camera's horizontal rotation (yaw)
         cameraHorizontal += look.x * lookSpeed;
+
         // Update the camera's vertical rotation (pitch) and clamp it
         cameraVertical -= look.y * lookSpeed;
         cameraVertical = Mathf.Clamp(cameraVertical, -90f, 90f);
@@ -208,10 +217,4 @@ public class PlayerController : MonoBehaviour
             collider.height = standingHeight;
         }
     }
-
-    //private void LateUpdate()
-    //{
-    //    Camera = Player Camera position
-    //    cameraTransform.position = transform.position;
-    //}
 }

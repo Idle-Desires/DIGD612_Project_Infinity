@@ -80,6 +80,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Swap"",
+                    ""type"": ""Button"",
+                    ""id"": ""cf592cdb-74b2-4e86-8bc2-03cf29db47d6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""24eac90e-f267-4c59-9789-a0bb07d081e3"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""JoinButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""fce54a80-18da-48dc-9acc-257f330e18c8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,6 +285,94 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8f751bff-bd62-473e-b316-31486ed801be"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""077c81d6-11ff-42a5-91a1-ffbd983607b7"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d9c3af96-828e-441f-a3ce-28bf7df3625c"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e39c9297-a10f-4696-adc3-1089eada914d"",
+                    ""path"": ""<XInputController>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a2646801-55fc-4cec-8125-93ff5806e985"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Swap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""88658db9-7fe1-4185-82f2-c08adf53932b"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""JoinButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c257f987-9996-4225-890a-2ef8ba38b8a5"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""JoinButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""54307656-ca99-4b12-8dfa-251453c77998"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -272,6 +387,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
+        m_Player_Swap = m_Player.FindAction("Swap", throwIfNotFound: true);
+        m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
+        m_Player_JoinButton = m_Player.FindAction("JoinButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -339,6 +457,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Reload;
+    private readonly InputAction m_Player_Swap;
+    private readonly InputAction m_Player_Scroll;
+    private readonly InputAction m_Player_JoinButton;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -349,6 +470,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
+        public InputAction @Swap => m_Wrapper.m_Player_Swap;
+        public InputAction @Scroll => m_Wrapper.m_Player_Scroll;
+        public InputAction @JoinButton => m_Wrapper.m_Player_JoinButton;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -376,6 +500,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Reload.started += instance.OnReload;
             @Reload.performed += instance.OnReload;
             @Reload.canceled += instance.OnReload;
+            @Swap.started += instance.OnSwap;
+            @Swap.performed += instance.OnSwap;
+            @Swap.canceled += instance.OnSwap;
+            @Scroll.started += instance.OnScroll;
+            @Scroll.performed += instance.OnScroll;
+            @Scroll.canceled += instance.OnScroll;
+            @JoinButton.started += instance.OnJoinButton;
+            @JoinButton.performed += instance.OnJoinButton;
+            @JoinButton.canceled += instance.OnJoinButton;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -398,6 +531,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Reload.started -= instance.OnReload;
             @Reload.performed -= instance.OnReload;
             @Reload.canceled -= instance.OnReload;
+            @Swap.started -= instance.OnSwap;
+            @Swap.performed -= instance.OnSwap;
+            @Swap.canceled -= instance.OnSwap;
+            @Scroll.started -= instance.OnScroll;
+            @Scroll.performed -= instance.OnScroll;
+            @Scroll.canceled -= instance.OnScroll;
+            @JoinButton.started -= instance.OnJoinButton;
+            @JoinButton.performed -= instance.OnJoinButton;
+            @JoinButton.canceled -= instance.OnJoinButton;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -423,5 +565,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnSwap(InputAction.CallbackContext context);
+        void OnScroll(InputAction.CallbackContext context);
+        void OnJoinButton(InputAction.CallbackContext context);
     }
 }
