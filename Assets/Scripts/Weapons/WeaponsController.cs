@@ -10,7 +10,8 @@ public class WeaponsController : MonoBehaviour
     //Reference to the input actions created under PlayerInputActions
     private PlayerInputActions inputActions;
 
-    public EnemyStats enemy;
+    private EnemyStats enemy;
+    private PlayerStats otherPlayer;
 
     //Type of gun being held
     public string gunName;
@@ -155,10 +156,15 @@ public class WeaponsController : MonoBehaviour
             Debug.Log(rayHit.transform.name);
 
             EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
+            PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
 
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+            }
+            else if (otherPlayer != null) 
+            { 
+                otherPlayer.TakeDamage(damage);
             }
 
             if (rayHit.rigidbody != null)
@@ -176,16 +182,16 @@ public class WeaponsController : MonoBehaviour
     {
         Debug.Log(bulletsLeft + " / " + magazineSize);
 
-        // Destroy the current bullet if it exists
+        //Destroy the current bullet if it exists
         if (currentBullet != null)
         {
             Destroy(currentBullet,0.5f);
         }
 
-        // Instantiate the bullet at the spawn point
+        //Instantiate the bullet at the spawn point
         currentBullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 
-        // Get the Rigidbody component from the bullet and apply force to shoot it forward
+        //Get the Rigidbody component from the bullet and apply force to shoot it forward
         Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
 
         if (rb != null)

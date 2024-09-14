@@ -86,7 +86,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void SpawnPlayer()
     {
-
         //Vector2 randomPosition = new Vector2(Random.Range(minX, maxX), Random.Range(minZ, maxZ));
         PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity);
     }

@@ -9,6 +9,8 @@ TagManager:
   - Projectile
   - Bullet
   - Ground
+  - RespawnPoint
+  - Boundary
   layers:
   - Default
   - TransparentFX

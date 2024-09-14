@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using Photon.Pun;
 
@@ -20,16 +22,16 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 5f;
     public float jumpCooldown = 0.25f;
     public float airMultiplier = 0.4f;
-    public float crouchSpeed = 2.5f;  // Reduced speed when crouching
-    public float crouchHeight = 1f;   // Height of the player when crouching
-    public float standingHeight = 2f; // Height of the player when standing
+    public float crouchSpeed = 2.5f;  //Reduced speed when crouching
+    public float crouchHeight = 1f;   //Height of the player when crouching
+    public float standingHeight = 2f; // eight of the player when standing
     public float groundDrag;
 
     //Camera references
     private Transform cameraTransform;
     //private Camera playerCamera;
-    private float cameraVertical = 0f;  // Vertical rotation
-    private float cameraHorizontal = 0f;    // Horizontal rotation
+    private float cameraVertical = 0f;  //Vertical rotation
+    private float cameraHorizontal = 0f;    //Horizontal rotation
     [SerializeField] GameObject playerCam;
 
     //Specify what the ground layer is for the items in inspector view and a layermask
@@ -202,6 +204,19 @@ public class PlayerController : MonoBehaviour
         //Check to see if the player is hitting the ground
         return Physics.Raycast(transform.position, Vector3.down, raycastDistance, groundLayer);
         //return Physics.CheckSphere(groundCheck.position, raycastDistance, groundLayer);
+    }
+
+    // Call this function to lock the jump for a short time
+    public void LockJumpForDuration(float duration)
+    {
+        StartCoroutine(LockJump(duration));
+    }
+
+    private IEnumerator LockJump(float duration)
+    {
+        readyToJump = false;
+        yield return new WaitForSeconds(duration);
+        readyToJump = true;
     }
 
     private void HandleCrouch()

@@ -35,7 +35,8 @@ public class EnemyStats : MonoBehaviour
         Destroy(gameObject,0.5f);
     }
 
-    void OnCollisionEnter(Collision collision)//for 3D RB add 2D for other rb option
+    //For 3D RB add 2D for other rb option
+    void OnCollisionEnter(Collision collision)
     {
         Debug.Log(health);
 

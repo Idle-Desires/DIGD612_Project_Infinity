@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8825731098166639082}
   - component: {fileID: 7463230770625644375}
-  - component: {fileID: 5965084678883440223}
-  m_Layer: 0
+  - component: {fileID: 7249023617200588902}
+  m_Layer: 7
   m_Name: WeaponHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedWeapon: 0
---- !u!114 &5965084678883440223
+  gunObj: {fileID: 3417681456649137987}
+--- !u!114 &7249023617200588902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,8 +66,9 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -82,7 +84,7 @@ GameObject:
   - component: {fileID: 7143923053696655228}
   - component: {fileID: 7944943926867614595}
   - component: {fileID: 627116916327490070}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +185,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4378862416902143125}
   - component: {fileID: 7409981022735914001}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -275,7 +277,8 @@ GameObject:
   - component: {fileID: -5502993288313374914}
   - component: {fileID: 1916769139330252453}
   - component: {fileID: 8073303576753879007}
-  m_Layer: 0
+  - component: {fileID: 5105488436844453815}
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -291,7 +294,7 @@ Transform:
   m_GameObject: {fileID: 2928945321350816234}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.95, z: 0}
+  m_LocalPosition: {x: 20, y: 5, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -396,9 +399,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!114 &802955616144702993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -476,6 +479,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmoothingDelay: 8
   view: {fileID: 4378862416902143125}
+--- !u!114 &5105488436844453815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2928945321350816234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa7899773f592a42908de9585cf3afa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: 50
+  playerDeaths: 3
+  respawnPoint: {fileID: 3127281726024884619, guid: e9f1158241c3865458dd6cca44cae758, type: 3}
+  respawnOffsetY: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &3307071094408430184
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,8 +511,8 @@ GameObject:
   - component: {fileID: 3606743980296976854}
   - component: {fileID: 6659495334082259299}
   - component: {fileID: 6115355478312957868}
-  - component: {fileID: 6293184707893116061}
-  m_Layer: 10
+  - component: {fileID: 7189183905788667343}
+  m_Layer: 7
   m_Name: Projectile
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -596,8 +618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
-  gunName: 
+  gunName: Projectile
   damage: 10
   range: 100
   fireRate: 15
@@ -612,7 +633,7 @@ MonoBehaviour:
   bulletSpeed: 20
   ammoDisplay: {fileID: 979739228839558428}
   fpsCam: {fileID: 7409981022735914001}
---- !u!114 &6293184707893116061
+--- !u!114 &7189183905788667343
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -647,8 +668,8 @@ GameObject:
   - component: {fileID: 8794068509129355873}
   - component: {fileID: 7474682204245863491}
   - component: {fileID: 1572093418742219715}
-  - component: {fileID: 2181308296867717430}
-  m_Layer: 10
+  - component: {fileID: 7429027911814603838}
+  m_Layer: 7
   m_Name: HitScan
   m_TagString: HitScan
   m_Icon: {fileID: 0}
@@ -753,8 +774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
-  gunName: 
+  gunName: HitScan
   damage: 10
   range: 100
   fireRate: 15
@@ -769,7 +789,7 @@ MonoBehaviour:
   bulletSpeed: 20
   ammoDisplay: {fileID: 979739228839558428}
   fpsCam: {fileID: 7409981022735914001}
---- !u!114 &2181308296867717430
+--- !u!114 &7429027911814603838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -800,7 +820,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6394422773959911758}
-  m_Layer: 10
+  m_Layer: 7
   m_Name: BulletSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,7 +853,7 @@ GameObject:
   - component: {fileID: 6694989159169011378}
   - component: {fileID: 6708264090989453804}
   - component: {fileID: 979739228839558428}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: AmmoDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -968,7 +988,7 @@ GameObject:
   - component: {fileID: 365693066991834951}
   - component: {fileID: 4947225368668001466}
   - component: {fileID: 9174174705520112331}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerLook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1072,7 +1092,7 @@ GameObject:
   - component: {fileID: 8333851405195054343}
   - component: {fileID: 5599688353700180866}
   - component: {fileID: 7680700664672427631}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}

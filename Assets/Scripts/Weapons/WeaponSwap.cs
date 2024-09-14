@@ -10,6 +10,9 @@ public class WeaponSwap : MonoBehaviour
     //Input Action Asset reference
     private PlayerInputActions inputActions;
 
+    //Variable to turn on game object
+    [SerializeField] GameObject gunObj;
+
     //input variables
     private bool swapGP;
     private Vector2 mouseScroll;
@@ -25,8 +28,11 @@ public class WeaponSwap : MonoBehaviour
 
         if (photonView.IsMine)
         {
-            //Initialize the input actions, ridigbody and collider
+            //Initialize the input actions
             inputActions = new PlayerInputActions();
+
+            //Turn gun game object on
+            gunObj.SetActive(true);
 
             //Swapping with mouse scroll wheel
             inputActions.Player.Scroll.performed += ctx => mouseScroll = ctx.ReadValue<Vector2>();
@@ -58,30 +64,33 @@ public class WeaponSwap : MonoBehaviour
     {
         int previousWeapon = selectedWeapon;
 
-        // Mouse scroll wheel forward direction
+        //Mouse scroll wheel forward 
         if (mouseScroll.y > 0f)
         {
             NextWeapon();
         }
 
-        // Mouse scroll wheel backward direction
+        //Mouse scroll wheel backward
         if (mouseScroll.y < 0f)
         {
             PreviousWeapon();
         }
 
-        // Controller swap input: register only one swap per button press
+        //Controller swap || Register only one swap per button press
         if (swapGP && !swappedGP)
         {
             NextWeapon();
-            swappedGP = true;  // Ensure we only swap once
+
+            //Ensure we only swap once
+            swappedGP = true;  
         }
         else if (!swapGP)
         {
-            swappedGP = false; // Reset flag when button is released
+            //Reset flag when button is released
+            swappedGP = false; 
         }
 
-        // Change weapon if selectedWeapon has been updated
+        //Change weapon if selectedWeapon has been updated
         if (previousWeapon != selectedWeapon)
         {
             SelectWeapon();
