@@ -9,6 +9,7 @@ public class WeaponsController : MonoBehaviour
 {
     //Reference to the input actions created under PlayerInputActions
     private PlayerInputActions inputActions;
+    [SerializeField] private PlayerStats playerStats;
 
     private EnemyStats enemy;
     private PlayerStats otherPlayer;
@@ -54,6 +55,7 @@ public class WeaponsController : MonoBehaviour
 
     //Graphics
     public TextMeshProUGUI ammoDisplay;
+    public TextMeshProUGUI deathDisplay;
 
     //Camera
     public Camera fpsCam;
@@ -71,6 +73,7 @@ public class WeaponsController : MonoBehaviour
             //readyToShoot = true;
 
             ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
+            //deathDisplay.SetText("Deaths: " + playerStats.playerDeaths);
 
             //Initialize the input actions, ridigbody and collider
             inputActions = new PlayerInputActions();
@@ -108,6 +111,12 @@ public class WeaponsController : MonoBehaviour
         if (ammoDisplay != null)
         {
             ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
+        }
+
+        //Set death display 
+        if (deathDisplay != null)
+        {
+            deathDisplay.SetText("Deaths: " + playerStats.playerDeaths);
         }
 
         if (reload && bulletsLeft < magazineSize && !reloading)
