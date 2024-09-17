@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     //Player Health Pool
     public float playerHealth = 50f;
     public int playerDeaths;
+    public TextMeshProUGUI deathDisplay;
 
     //Respawn
     public Transform respawnPoint; 
@@ -15,13 +17,11 @@ public class PlayerStats : MonoBehaviour
 
     // References to components
     private Rigidbody playerRb;
-    //private PlayerController playerController;
 
     private void Awake()
     {
         playerDeaths = 0;
         playerRb = GetComponent<Rigidbody>();
-        //playerController = GetComponent<PlayerController>();
     }
 
     void Update()
