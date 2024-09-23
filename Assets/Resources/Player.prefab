@@ -620,6 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerStats: {fileID: 0}
   gunName: Projectile
   damage: 10
   range: 100
@@ -634,6 +635,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 6394422773959911758}
   bulletSpeed: 20
   ammoDisplay: {fileID: 979739228839558428}
+  deathDisplay: {fileID: 0}
   fpsCam: {fileID: 7409981022735914001}
 --- !u!114 &7189183905788667343
 MonoBehaviour:
@@ -776,6 +778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerStats: {fileID: 0}
   gunName: HitScan
   damage: 10
   range: 100
@@ -790,6 +793,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 6394422773959911758}
   bulletSpeed: 20
   ammoDisplay: {fileID: 979739228839558428}
+  deathDisplay: {fileID: 0}
   fpsCam: {fileID: 7409981022735914001}
 --- !u!114 &7429027911814603838
 MonoBehaviour:
