@@ -21,7 +21,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public float maxX;
     public float minZ;
     public float maxZ;
-    Vector3 position = new Vector3(1, 3, 1); //spawn height
+    public Vector3 position = new Vector3(1, 3, 1); //spawn height
+    public Vector3 startRespawnPosition;
 
     private void Awake()
     {
@@ -78,7 +79,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         connectionStatus = "Room Joined";
-        playerID = PhotonNetwork.PlayerList.Length - 1;
+
+        // Assign playerID based on Photon actor number (unique ID)
+        playerID = PhotonNetwork.LocalPlayer.ActorNumber;
         connectionStatus = $"PlayerID : {playerID}";
 
         SpawnPlayer();
@@ -86,8 +89,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void SpawnPlayer()
     {
-        //Vector2 randomPosition = new Vector2(Random.Range(minX, maxX), Random.Range(minZ, maxZ));
-        PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity);
+        // Instantiate the player prefab at a specific position
+        //GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, startRespawnPosition, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, position, Quaternion.identity);
+
+        // Retrieve the player's ID from Photon (should match playerID assigned above)
+        int newPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        Debug.Log(newPlayerID);
+
+        // Add the player to the GameManager with their respawn point
+        GameManager.instance.AddPlayer(newPlayerID, player.transform);
+
+        //// Sync player stats (kills, deaths) with Photon custom properties
+        //Photon.Realtime.Player photonPlayer = PhotonNetwork.LocalPlayer;
+        //ExitGames.Client.Photon.Hashtable initialProps = new ExitGames.Client.Photon.Hashtable
+        //{
+        //    { "kills", 0 },
+        //    { "deaths", 0 }
+        //};
+        //photonPlayer.SetCustomProperties(initialProps);
+
+        // Refresh the scoreboard UI after adding a new player
+        //GameManager.instance.UpdateScoreboard();
     }
 
     private void OnGUI()

@@ -19,6 +19,9 @@ public class WeaponsController : MonoBehaviour
 
     //Bullet
     private GameObject currentBullet;       // Reference to the current bullet
+    public GameObject bulletPrefab;    // The bullet prefab
+    public Transform bulletSpawnPoint; // The point where bullets will spawn
+    public float bulletSpeed = 60f;    // Speed of the bullet
 
     //Input
     private bool attack;
@@ -32,34 +35,40 @@ public class WeaponsController : MonoBehaviour
     private float nextTimeToFire = 0f;
 
     //Gun variables
-    public int magazineSize;
-    public int bulletsPerShot; //bullets per tap of the mouse or attack button
-    public float timeBetweenShooting;
-    public float reloadTime;
-    public float timeBetweenShots;
-    int bulletsLeft;
-    int bulletsShot;
+    //public int bulletsPerShot; //bullets per tap of the mouse or attack button
+    //public float timeBetweenShooting;
+    //public float reloadTime = 1f; 
+    //public float timeBetweenShots;
+    //public int bulletsLeft;
+    //int bulletsShot;
+
+    // Magazine system variables
+    public int magSize = 20;  // Number of bullets per magazine
+    public int ammoTotal = 60;     // Total number of bullets player has
+    public float reloadTime = 1f;  // Time it takes to reload
+
+    // Ammo tracking
+    public int bulletsLeftInMagazine;  // Bullets left in the current magazine
+    public bool reloading = false;     // Whether the player is reloading
 
     //Booleans to determine true or false settings
     bool shooting;
-    //bool readyToShoot;
-    bool reloading;
+    // Shooting mode tracking
+    //private ShootingMode currentShootingMode; // Track the current shooting mode
 
     //References to other game objects in the scene
     public RaycastHit rayHit;
 
-    //Projectile gun
-    public GameObject bulletPrefab;    // The bullet prefab
-    public Transform bulletSpawnPoint; // The point where bullets will spawn
-    public float bulletSpeed = 60f;    // Speed of the bullet
-
     //Graphics
     public TextMeshProUGUI ammoDisplay;
-    public TextMeshProUGUI deathDisplay;
+    //public TextMeshProUGUI deathDisplay;
 
     //Camera
     public Camera fpsCam;
     PhotonView photonView;
+
+    public enum ShootingMode { HitScan, Projectile }
+    private ShootingMode currentShootingMode;  // Track the current shooting mode
 
     //Initialize at the start of the game
     private void Awake()
@@ -69,22 +78,20 @@ public class WeaponsController : MonoBehaviour
 
         if (photonView.IsMine)
         {
-            bulletsLeft = magazineSize;
-            //readyToShoot = true;
+            ammoTotal = 60;
+            //Debug.Log(bulletsLeftInMagazine + " & " + magSize);
+            bulletsLeftInMagazine = magSize;
+            ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
 
-            ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
-            //deathDisplay.SetText("Deaths: " + playerStats.playerDeaths);
-
-            //Initialize the input actions, ridigbody and collider
+            // Initialize input actions
             inputActions = new PlayerInputActions();
 
-            //Attack input
+            // Attack input mapped to single-shot shooting
             inputActions.Player.Attack.performed += ctx => attack = true;
             inputActions.Player.Attack.canceled += ctx => attack = false;
 
-            //Reload input
-            inputActions.Player.Reload.performed += ctx => reload = true;
-            inputActions.Player.Reload.canceled += ctx => reload = false;
+            // Reload input
+            inputActions.Player.Reload.performed += ctx => Reload();
         }
         else
         {
@@ -96,13 +103,14 @@ public class WeaponsController : MonoBehaviour
     {
         // Enable the Player input action map
         inputActions.Player.Enable();
+        reloading = false;
     }
 
-    private void OnDisable()
-    {
-        // Disable the Player input action map
-        inputActions.Player.Disable();
-    }
+    //private void OnDisable()
+    //{
+    //    // Disable the Player input action map
+    //    inputActions.Player.Disable();
+    //}
 
     //Checking states for shooting or reloading the gun
    public void Update()
@@ -110,125 +118,151 @@ public class WeaponsController : MonoBehaviour
         //Set ammo display 
         if (ammoDisplay != null)
         {
-            ammoDisplay.SetText(bulletsLeft + " / " + magazineSize);
+            ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
         }
 
-        //Set death display 
-        if (deathDisplay != null)
+        // Check for reload input and magazine state
+        if (reload && bulletsLeftInMagazine < magSize && !reloading)
         {
-            deathDisplay.SetText("Deaths: " + playerStats.playerDeaths);
+            Reload();
+            return;
         }
 
-        if (reload && bulletsLeft < magazineSize && !reloading)
+        // Automatically reload if magazine is empty and player still has ammo
+        if (bulletsLeftInMagazine == 0 && ammoTotal > 0 && !reloading)
         {
-            Debug.Log("Reloading");
             Reload();
         }
 
-        if (bulletsLeft == 0 && !reloading)
+        if(attack == true)
         {
-            Debug.Log("Auto Reloading");
-            Reload();
+            ShootOnce();
         }
+    }
 
-        if (attack && Time.time >= nextTimeToFire)
+    // Method to shoot only once when the mouse is clicked
+    public void ShootOnce()
+    {
+        // Check if enough time has passed, magazine has bullets, and not reloading
+        if (Time.time >= nextTimeToFire && bulletsLeftInMagazine > 0 && !reloading)
         {
             nextTimeToFire = Time.time + 1f / fireRate;
-            bulletsShot = bulletsPerShot;
 
-            //Different shooting mechanics trying to see if it picks up the gameobject with the right operation
-            if(gameObject.tag == "HitScan")
+            if (currentShootingMode == ShootingMode.HitScan)
             {
-                Debug.Log("HitScan");
-                Shoot();
+                Shoot(); // Call hitscan method
             }
-            else
+            else if (currentShootingMode == ShootingMode.Projectile)
             {
-                Debug.Log("Projectile");
+                // Only call ProjectileShot if we are in projectile mode
                 ProjectileShot();
-                //DestroyImmediate(bulletPrefab,true);
             }
         }
+    }
 
+    public void SetShootingMode(ShootingMode mode)
+    {
+        if (mode == ShootingMode.HitScan && currentBullet != null)
+        {
+            Destroy(currentBullet); // Destroy the active projectile if it exists
+            currentBullet = null; // Reset currentBullet
+        }
 
+        currentShootingMode = mode; // Update shooting mode
     }
 
     //What happens when the player shots the gun
     void Shoot()
     {
-        //Prevent more shooting whilst shooting
-        //readyToShoot = false;
-        Debug.Log(bulletsLeft + " / " + magazineSize);
+        // Reset currentBullet as we are not using projectiles
+        //currentBullet = null;
 
-        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out rayHit, range))
+        bulletsLeftInMagazine--; // Use one bullet from the magazine
+
+        // If we were previously in projectile mode, destroy the current bullet (to stop it from being in the scene)
+        //if (currentBullet != null)
+        //{
+        //    Destroy(currentBullet);  // Stop any active projectile bullets
+        //}
+
+        // Raycast to detect if we hit something
+        if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out RaycastHit rayHit, range))
         {
-            Debug.Log(rayHit.transform.name);
-
             EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
             PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
 
+            // Apply damage if we hit an enemy or another player
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
             }
-            else if (otherPlayer != null) 
-            { 
+            else if (otherPlayer != null)
+            {
                 otherPlayer.TakeDamage(damage);
             }
 
+            // Apply impact force if the object has a Rigidbody
             if (rayHit.rigidbody != null)
             {
                 rayHit.rigidbody.AddForce(-rayHit.normal * impactForce);
             }
         }
 
-        //Keeping track of how many bullets the user has left
-        bulletsLeft--;
-        bulletsShot--;
+        // Reset currentBullet as we are not using projectiles
+        //currentBullet = null;
     }
 
     void ProjectileShot()
     {
-        Debug.Log(bulletsLeft + " / " + magazineSize);
-
-        //Destroy the current bullet if it exists
+        ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
+        Debug.Log("Projectile Test");
         if (currentBullet != null)
         {
-            Destroy(currentBullet,0.5f);
+            Destroy(currentBullet, 0.5f); // Destroy existing projectile if any
         }
 
-        //Instantiate the bullet at the spawn point
+        bulletsLeftInMagazine--; // Use one bullet from the magazine
+
+        // Instantiate the bullet at the spawn point
         currentBullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 
-        //Get the Rigidbody component from the bullet and apply force to shoot it forward
+        // Get the Rigidbody component and apply force to shoot the bullet forward
         Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
-
         if (rb != null)
         {
             rb.AddForce(bulletSpawnPoint.forward * bulletSpeed, ForceMode.Impulse);
         }
-
-        bulletsLeft--;
-        bulletsShot++;
-
-        //if (bulletsShot > 0 && bulletsLeft > 0)
-        //{
-        //    Invoke("Shoot", timeBetweenShots);
-        //}
     }
 
     //Changes the state and calls method to reset variables
-    private void Reload()
+    public void Reload() //private void
     {
-        reloading = true;
-        Invoke("ReloadFinished", reloadTime);
+        if (ammoTotal > 0 && !reloading) // Check if player has enough ammo to reload
+        {
+            reloading = true;
+            Invoke("ReloadFinished", reloadTime);  // Delay reloading to simulate reload time
+        }
     }
 
     //Resets variables
     private void ReloadFinished()
     {
-        bulletsLeft = magazineSize;
-        reloading = false;
+        int bulletsToReload = magSize - bulletsLeftInMagazine;  // How many bullets we need to fill the magazine
+
+        if (ammoTotal >= bulletsToReload)
+        {
+            // If enough ammo remains, reload full magazine
+            ammoTotal -= bulletsToReload;
+            bulletsLeftInMagazine = magSize;
+        }
+        else
+        {
+            // If not enough ammo, fill the magazine with whatever ammo is left
+            bulletsLeftInMagazine += ammoTotal;
+            ammoTotal = 0;  // Player is out of ammo
+        }
+
+        reloading = false;  // Reloading is complete
     }
 
     //If the bullet hits anything with a RB it will be destroyed
