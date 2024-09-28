@@ -54,11 +54,11 @@ public class WeaponSwap : MonoBehaviour
         inputActions.Player.Enable();
     }
 
-    private void OnDisable()
-    {
-        // Disable the Player input action map
-        inputActions.Player.Disable();
-    }
+    //private void OnDisable()
+    //{
+    //    // Disable the Player input action map
+    //    inputActions.Player.Disable();
+    //}
 
     private void Update()
     {
@@ -130,13 +130,21 @@ public class WeaponSwap : MonoBehaviour
         //Loops through the gun game objects under the weapon holder
         foreach (Transform weapon in transform)
         {
-            if (i == selectedWeapon)
+            // Activate the selected weapon
+            weapon.gameObject.SetActive(i == selectedWeapon);
+
+            // Get the WeaponsController component and set the shooting mode
+            WeaponsController weaponsController = weapon.GetComponent<WeaponsController>();
+            if (weaponsController != null)
             {
-                weapon.gameObject.SetActive(true);
-            }
-            else
-            {
-                weapon.gameObject.SetActive(false);
+                if (weapon.CompareTag("HitScan"))
+                {
+                    weaponsController.SetShootingMode(WeaponsController.ShootingMode.HitScan);
+                }
+                else if (weapon.CompareTag("Projectile"))
+                {
+                    weaponsController.SetShootingMode(WeaponsController.ShootingMode.Projectile);
+                }
             }
 
             i++;

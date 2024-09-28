@@ -32,13 +32,13 @@ public class EnemyStats : MonoBehaviour
     //Once they have taken enough damage to die
     void Die()
     {
-        Destroy(gameObject,0.5f);
+        Destroy(gameObject, 0.5f);
     }
 
     //For 3D RB add 2D for other rb option
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(health);
+        //Debug.Log(health);
 
         health -= 10f;
     }

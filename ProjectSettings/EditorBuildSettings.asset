@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyTest.unity
     guid: ba75954ee22e39d499bb087b8b3ec2dc
   - enabled: 1
-    path: Assets/Scenes/MovementSystem 1.unity
-    guid: edde4e141c93f884b85600a4495e3f92
+    path: Assets/Scenes/AstralSky Test.unity
+    guid: b5d80610ab3015c458439de79e205942
   m_configObjects: {}

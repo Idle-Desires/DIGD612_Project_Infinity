@@ -11,6 +11,8 @@ TagManager:
   - Ground
   - RespawnPoint
   - Boundary
+  - Health
+  - Ammo
   layers:
   - Default
   - TransparentFX
@@ -23,7 +25,7 @@ TagManager:
   - whatIsEnemy
   - Enemy
   - Gun
-  - 
+  - whatIsGrappleable
   - 
   - 
   - 
