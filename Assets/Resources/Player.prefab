@@ -444,8 +444,14 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  slideForce: 10
+  slideDuration: 0.5
+  slideCooldown: 1
+  slideSpeedThreshold: 3
   healthDisplay: {fileID: 6359089942503826583}
   scoreboardUI: {fileID: 0}
+  freeze: 0
+  activeGrapple: 0
 --- !u!114 &-5502993288313374914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -524,12 +530,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: 50
   playerDeaths: 0
+  deathDisplay: {fileID: 0}
   respawnPoint: {fileID: 3127281726024884619, guid: e9f1158241c3865458dd6cca44cae758, type: 3}
   respawnOffsetY: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  playerID: 0
 --- !u!1 &3307071094408430184
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,7 +671,6 @@ MonoBehaviour:
   bulletsLeftInMagazine: 0
   reloading: 0
   ammoDisplay: {fileID: 979739228839558428}
-  deathDisplay: {fileID: 0}
   fpsCam: {fileID: 7409981022735914001}
 --- !u!114 &7189183905788667343
 MonoBehaviour:
@@ -823,7 +828,6 @@ MonoBehaviour:
   bulletsLeftInMagazine: 0
   reloading: 0
   ammoDisplay: {fileID: 979739228839558428}
-  deathDisplay: {fileID: 0}
   fpsCam: {fileID: 7409981022735914001}
 --- !u!114 &7429027911814603838
 MonoBehaviour:
