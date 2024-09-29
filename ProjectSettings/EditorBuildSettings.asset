@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AstralSky Test.unity
     guid: b5d80610ab3015c458439de79e205942
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: b75e9680aae24a04dac81290942eb5a8
   m_configObjects: {}

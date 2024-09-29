@@ -30,6 +30,15 @@ public class PlayerController : MonoBehaviour
     private bool isCrouching = false;
     public float groundDrag;
 
+    //Dashing
+    public float dashSpeed;
+    public bool dashing;
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    private bool keepMomentum;
+    public float dashSpeedChangeFactor;
+    public float maxYSpeed;
+
     //Camera references
     private Transform cameraTransform;
     //private Camera playerCamera;
@@ -207,7 +216,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Handle Drag
-        if (isGrounded && !activeGrapple)
+        if (isGrounded && !activeGrapple && !dashing)
         {
             rb.drag = groundDrag;
         }
@@ -222,6 +231,11 @@ public class PlayerController : MonoBehaviour
         if (activeGrapple)
         {
             return;
+        }
+        else if (dashing)
+        {
+            desiredMoveSpeed = dashSpeed;
+            speedChangeFactor = dashSpeedChangeFactor;
         }
 
         //Get the camera positons
@@ -249,6 +263,50 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddForce(movement.normalized * moveSpeed * 5f * airMultiplier, ForceMode.Force);
         }
+
+        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        if (desiredMoveSpeedHasChanged) 
+        {
+            if (keepMomentum) 
+            {
+                StopAllCoroutines();
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else 
+            {
+                StopAllCoroutines();
+                moveSpeed = desiredMoveSpeed;
+            }
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+        Debug.Log(moveSpeed);
+        Debug.Log(lastDesiredMoveSpeed);
+        Debug.Log(desiredMoveSpeed);
+    }
+
+    private float speedChangeFactor;
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        // smoothly lerp movementSpeed to desired value
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        float boostFactor = speedChangeFactor;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            time += Time.deltaTime * boostFactor;
+
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+        speedChangeFactor = 1f;
+        keepMomentum = false;
     }
 
     private void Look()
@@ -266,6 +324,7 @@ public class PlayerController : MonoBehaviour
 
     private void SpeedControl()
     {
+        Debug.Log(moveSpeed);
         if (activeGrapple) 
         {
             return;
@@ -279,6 +338,10 @@ public class PlayerController : MonoBehaviour
             Vector3 limitedVel = flatVel.normalized * moveSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
+
+        // limit y vel
+        if (maxYSpeed != 0 && rb.velocity.y > maxYSpeed)
+            rb.velocity = new Vector3(rb.velocity.x, maxYSpeed, rb.velocity.z);
     }
 
     private void Jump(float force)
