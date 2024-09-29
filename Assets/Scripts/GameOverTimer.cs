@@ -41,6 +41,9 @@ public class GameOverTimer : MonoBehaviour
                 timeRemaining = 0;
                 timerIsRunning = false;
 
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
                 // Load the next scene
                 SceneManager.LoadScene(sceneToLoad);
             }
