@@ -530,6 +530,7 @@ GameObject:
   - component: {fileID: 4221992514854301263}
   - component: {fileID: 6415137791630665519}
   - component: {fileID: 7865818143443211436}
+  - component: {fileID: 1561718390820638604}
   m_Layer: 7
   m_Name: Player Gravity
   m_TagString: Player
@@ -675,6 +676,10 @@ MonoBehaviour:
   crouchHeight: 1.5
   standingHeight: 1.8
   groundDrag: 2
+  dashSpeed: 8
+  dashing: 0
+  dashSpeedChangeFactor: 10
+  maxYSpeed: 0
   playerCam: {fileID: 2609738336143743539}
   isGrounded: 0
   groundLayer:
@@ -794,6 +799,29 @@ MonoBehaviour:
   grappleDelayTime: 0.2
   overshootYAxis: 2
   grapplingCd: 1
+--- !u!114 &1561718390820638604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2928945321350816234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0563106183dabdf43a09340fe2f9509a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orientation: {fileID: 1201092202530827457}
+  playerCam: {fileID: 4378862416902143125}
+  dashForce: 8
+  dashUpwardForce: 0
+  maxDashYSpeed: 8
+  dashDuration: 0.2
+  useCameraForward: 1
+  allowAllDirections: 1
+  disableGravity: 1
+  resetVel: 1
+  dashCd: 1.5
 --- !u!1 &3307071094408430184
 GameObject:
   m_ObjectHideFlags: 0
