@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedWeapon: 0
+  gunObj: {fileID: 0}
 --- !u!1 &2339656525637540520
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,10 +311,23 @@ MonoBehaviour:
   crouchHeight: 1.5
   standingHeight: 2
   groundDrag: 2
+  dashSpeed: 0
+  dashing: 0
+  dashSpeedChangeFactor: 0
+  maxYSpeed: 0
+  playerCam: {fileID: 0}
   isGrounded: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  slideForce: 10
+  slideDuration: 0.5
+  slideCooldown: 1
+  slideSpeedThreshold: 3
+  healthDisplay: {fileID: 0}
+  scoreboardUI: {fileID: 0}
+  freeze: 0
+  activeGrapple: 0
 --- !u!114 &-5502993288313374914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,20 +469,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
+  playerStats: {fileID: 0}
   gunName: 
+  bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
+  bulletSpawnPoint: {fileID: 6394422773959911758}
+  bulletSpeed: 20
   damage: 10
   range: 100
   fireRate: 15
   impactForce: 1
-  magazineSize: 50
-  bulletsPerShot: 1
-  timeBetweenShooting: 1
+  magSize: 20
+  ammoTotal: 60
   reloadTime: 0.5
-  timeBetweenShots: 0.5
-  bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
-  bulletSpawnPoint: {fileID: 6394422773959911758}
-  bulletSpeed: 20
+  bulletsLeftInMagazine: 0
+  reloading: 0
   ammoDisplay: {fileID: 979739228839558428}
   fpsCam: {fileID: 0}
 --- !u!1 &3417681456649137987
@@ -589,20 +603,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
+  playerStats: {fileID: 0}
   gunName: 
+  bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
+  bulletSpawnPoint: {fileID: 6394422773959911758}
+  bulletSpeed: 20
   damage: 10
   range: 100
   fireRate: 15
   impactForce: 5
-  magazineSize: 50
-  bulletsPerShot: 1
-  timeBetweenShooting: 1
+  magSize: 20
+  ammoTotal: 60
   reloadTime: 0.5
-  timeBetweenShots: 0.5
-  bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
-  bulletSpawnPoint: {fileID: 6394422773959911758}
-  bulletSpeed: 20
+  bulletsLeftInMagazine: 0
+  reloading: 0
   ammoDisplay: {fileID: 979739228839558428}
   fpsCam: {fileID: 0}
 --- !u!1 &3946816390075046930
