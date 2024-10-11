@@ -1179,7 +1179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a9153c8622a164c96c15e14f5a8275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: AstralSky Test
+  sceneToLoad: AstralSkyTest2
 --- !u!4 &1702795764
 Transform:
   m_ObjectHideFlags: 0
