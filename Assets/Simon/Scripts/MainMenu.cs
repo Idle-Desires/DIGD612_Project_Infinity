@@ -4,24 +4,35 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
-
 {
-    public void StartGanme()
+    //Name of the scene you want to load
+    public string sceneToLoad;
+
+    public void StartGame()
     {
-        SceneManager.LoadScene("character");
+        if (!string.IsNullOrEmpty(sceneToLoad))
+        {
+            SceneManager.LoadScene(sceneToLoad);
+        }
+        else
+        {
+            Debug.LogError("Scene to load is not set!");
+        }
     }
+
     public void QuitGame()
     {
         Application.Quit();
         
     }
+
     public void LockIn()
     {
         SceneManager.LoadScene("Arena");
     }
+
     public void Options()
     {
         
     }
-
 }
