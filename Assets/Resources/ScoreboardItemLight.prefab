@@ -529,6 +529,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30084b8a9ca04624aa5b06d7d50a258f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerIDText: {fileID: 8097026674639043595}
+  playerNameText: {fileID: 8097026674639043595}
   killsText: {fileID: 2531603298041473462}
   deathsText: {fileID: 1609095242247724789}

@@ -13,6 +13,8 @@ public class ScoreboardManager : MonoBehaviour
     private PlayerInputActions inputActions;
     private bool isScoreboardVisible = false;
 
+    public static object Instance { get; internal set; }
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();

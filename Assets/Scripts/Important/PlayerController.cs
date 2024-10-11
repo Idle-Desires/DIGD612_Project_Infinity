@@ -67,9 +67,9 @@ public class PlayerController : MonoBehaviour
 
     //Multiplayer values
     PhotonView photonView;
-    public TextMeshProUGUI healthDisplay;
+    //public TextMeshProUGUI healthDisplay;
     private int playerID; // Player's unique ID
-    private float playerHealth = 50f; // Variable to store the player's health
+    //private float playerHealth = 50f; // Variable to store the player's health
     public GameObject scoreboardUI;
 
     //Grapple Variables
@@ -90,13 +90,13 @@ public class PlayerController : MonoBehaviour
             collider = GetComponent<CapsuleCollider>();
             playerCam.SetActive(true);
             playerID = photonView.Owner.ActorNumber;
-            playerHealth = GameManager.instance.GetPlayerHealth(playerID);
+            //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
 
             // Optionally, initialize player's health from the GameManager
-            playerHealth = GameManager.instance.GetPlayerHealth(playerID);
+            //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
 
             // Set initial health display
-            UpdateHealthDisplay();
+            //UpdateHealthDisplay();
 
             //healthDisplay.SetText("Health: " + playerHealth.ToString());
 
@@ -152,10 +152,10 @@ public class PlayerController : MonoBehaviour
         Look();
 
         // Update playerHealth during gameplay
-        playerHealth = GameManager.instance.GetPlayerHealth(playerID);
+        //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
 
         // Update the UI text to display the player's health
-        UpdateHealthDisplay();
+        //UpdateHealthDisplay();
 
         if (freeze) //freeze whilst grappling
         {
@@ -280,9 +280,9 @@ public class PlayerController : MonoBehaviour
         }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
-        Debug.Log(moveSpeed);
-        Debug.Log(lastDesiredMoveSpeed);
-        Debug.Log(desiredMoveSpeed);
+        //Debug.Log(moveSpeed);
+        //Debug.Log(lastDesiredMoveSpeed);
+        //Debug.Log(desiredMoveSpeed);
     }
 
     private float speedChangeFactor;
@@ -324,7 +324,7 @@ public class PlayerController : MonoBehaviour
 
     private void SpeedControl()
     {
-        Debug.Log(moveSpeed);
+       //Debug.Log(moveSpeed);
         if (activeGrapple) 
         {
             return;
@@ -415,35 +415,25 @@ public class PlayerController : MonoBehaviour
                 isCrouching = true;
             }
         }
-        //if (isSliding) return; // Prevent height changes while sliding
-
-        //if (crouch && move == Vector2.zero)
-        //{
-        //    collider.height = crouchHeight;  // Reduce height while crouching
-        //}
-        //else
-        //{
-        //    collider.height = standingHeight; // Return to normal height
-        //}
     }
 
-    public void TakeDamage(float damageAmount)
-    {
-        GameManager.instance.TakeDamage(playerID, damageAmount);
-    }
+    //public void TakeDamage(float damageAmount)
+    //{
+    //    GameManager.instance.TakeDamage(playerID, damageAmount);
+    //}
 
     // Method to update the health display text
-    public void UpdateHealthDisplay()
-    {
-        if (healthDisplay != null)
-        {
-            healthDisplay.SetText("Health: " + playerHealth.ToString());
-        }
-        else
-        {
-            Debug.LogWarning("Health display UI component is not assigned!");
-        }
-    }
+    //public void UpdateHealthDisplay()
+    //{
+    //    if (healthDisplay != null)
+    //    {
+    //        healthDisplay.SetText("Health: " + playerHealth.ToString());
+    //    }
+    //    else
+    //    {
+    //        Debug.LogWarning("Health display UI component is not assigned!");
+    //    }
+    //}
 
     private bool enableMovementOnNextTouch;
     public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight)

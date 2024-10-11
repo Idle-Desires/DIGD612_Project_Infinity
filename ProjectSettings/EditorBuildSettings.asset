@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyTest.unity
     guid: ba75954ee22e39d499bb087b8b3ec2dc
   - enabled: 1
+    path: Assets/Scenes/AstralSkyTest2.unity
+    guid: 735907eb007f87845a809208d0235878
+  - enabled: 0
     path: Assets/Scenes/AstralSky Test.unity
     guid: b5d80610ab3015c458439de79e205942
   - enabled: 1

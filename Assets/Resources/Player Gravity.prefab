@@ -531,6 +531,8 @@ GameObject:
   - component: {fileID: 6415137791630665519}
   - component: {fileID: 7865818143443211436}
   - component: {fileID: 1561718390820638604}
+  - component: {fileID: 7710679406655709048}
+  - component: {fileID: 6845379928777952276}
   m_Layer: 7
   m_Name: Player Gravity
   m_TagString: Player
@@ -689,7 +691,6 @@ MonoBehaviour:
   slideDuration: 1
   slideCooldown: 1
   slideSpeedThreshold: 3
-  healthDisplay: {fileID: 6359089942503826583}
   scoreboardUI: {fileID: 0}
   freeze: 0
   activeGrapple: 0
@@ -713,6 +714,8 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 8073303576753879007}
+  - {fileID: 7710679406655709048}
+  - {fileID: 6845379928777952276}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -772,6 +775,9 @@ MonoBehaviour:
   playerHealth: 50
   playerDeaths: 0
   deathDisplay: {fileID: 0}
+  healthDisplay: {fileID: 0}
+  playerController: {fileID: 0}
+  playerName: 
   respawnPoint: {fileID: 3127281726024884619, guid: e9f1158241c3865458dd6cca44cae758, type: 3}
   respawnOffsetY: 1
   groundLayer:
@@ -822,6 +828,38 @@ MonoBehaviour:
   disableGravity: 1
   resetVel: 1
   dashCd: 1.5
+--- !u!114 &7710679406655709048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2928945321350816234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 0
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &6845379928777952276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2928945321350816234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &3307071094408430184
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,6 +981,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: 0}
+  hitVFX: {fileID: 0}
+  recoverPercent: 0.7
+  recoilUp: 1
+  recoilBack: 0
+  recovering: 0
   gunName: Projectile
   bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
   bulletSpawnPoint: {fileID: 6394422773959911758}
@@ -1099,7 +1142,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604ab4ccd88284848b256c0eda901e3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStats: {fileID: 6415137791630665519}
+  playerStats: {fileID: 0}
+  hitVFX: {fileID: 0}
+  recoverPercent: 0.7
+  recoilUp: 0.02
+  recoilBack: 0.05
+  recovering: 0
   gunName: HitScan
   bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
   bulletSpawnPoint: {fileID: 6394422773959911758}

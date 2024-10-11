@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using TMPro;
 using Unity.VisualScripting;
@@ -9,6 +10,10 @@ public class PlayerStats : MonoBehaviour
     public float playerHealth = 50f;
     public int playerDeaths;
     public TextMeshProUGUI deathDisplay;
+    public TextMeshProUGUI healthDisplay;
+    public PlayerController playerController;
+
+    public string playerName;
 
     //Respawn
     public Transform respawnPoint;
@@ -33,11 +38,22 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    [PunRPC]
+    public void SetName(string name)
+    {
+        playerName = name;
+    }
+
     //What happens when the enemy is shot at
     public void TakeDamage(float damage)
     {
         //Decreasing health
         playerHealth -= damage;
+
+        //healthDisplay.text = playerHealth.ToString();
+        //playerController.healthDisplay.text = playerHealth.ToString();
+
+        //playerController.UpdateHealthDisplay();
 
         Debug.Log(playerHealth);
 
