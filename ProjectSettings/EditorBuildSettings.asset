@@ -4,25 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/MenuScene.unity
-    guid: e8d76cb6936bf4344b63bbef31779d14
-  - enabled: 1
-    path: Assets/Scenes/LobbyTest.unity
-    guid: ba75954ee22e39d499bb087b8b3ec2dc
-  - enabled: 1
-    path: Assets/Scenes/AstralSky Test.unity
-    guid: b5d80610ab3015c458439de79e205942
-  - enabled: 1
-<<<<<<< HEAD
-    path: Assets/Scenes/Character.unity
-    guid: 71c6ff7f0db7c8b4fa52bc8ba98217b2
-  - enabled: 1
-    path: Assets/Scenes/Arena.unity
-    guid: 7a1d683d862324f43a5a7f2fa8ed5152
-=======
-    path: Assets/Scenes/GameOver.unity
-    guid: b75e9680aae24a04dac81290942eb5a8
->>>>>>> b0f6fd3512500141b72f79972d3d250b0995326b
+  m_Scenes: []
   m_configObjects: {}
