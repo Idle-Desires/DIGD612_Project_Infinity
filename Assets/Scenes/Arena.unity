@@ -2608,14 +2608,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameVersion: 2
   roomName: Test
-  playerID: 0
   playerPrefab: {fileID: 2928945321350816234, guid: 45d1817aea845cc40832b30669cad7e2, type: 3}
-  minX: 0
-  maxX: 0
-  minZ: 0
-  maxZ: 0
-  position: {x: -8, y: 5, z: 56}
-  startRespawnPosition: {x: -8, y: 5, z: 56}
+  playerID: 0
+  spawnPoints: []
+  connectionStatus: Not Connected
 --- !u!4 &712694928
 Transform:
   m_ObjectHideFlags: 0
