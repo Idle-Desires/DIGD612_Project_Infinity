@@ -26,13 +26,13 @@ public class PlayerHealthUI : MonoBehaviour
         }
 
         // Optionally, initialize the health display with current health
-        UpdateHealthDisplay();
+        //UpdateHealthDisplay();
     }
 
     void Update()
     {
         // Periodically update the health display based on the player's current health
-        UpdateHealthDisplay();
+        //UpdateHealthDisplay();
     }
 
     void UpdateHealthDisplay()

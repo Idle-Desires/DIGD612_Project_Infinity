@@ -10,7 +10,7 @@ public class Boundaries : MonoBehaviour
     public float respawnOffsetY = 1f;
     public LayerMask groundLayer;
 
-    [SerializeField] public PlayerStats otherPlayer;
+    [SerializeField] public PlayerVariables otherPlayer;
 
     //Player ID
     public int playerID;
@@ -25,17 +25,21 @@ public class Boundaries : MonoBehaviour
             PlayerController playerControls = other.GetComponent<PlayerController>();
 
             // Get the GameManager instance
-            GameManager gmPlayer = GameManager.instance;
+            //GameManager gmPlayer = GameManager.instance;
+            //otherPlayer = PlayerVariables.pvInstance;
+            otherPlayer = other.GetComponent<PlayerVariables>();
 
-            if (gmPlayer != null)
+            if (otherPlayer != null)
             {
                 // Increase the player's death count
-                gmPlayer.RecordDeath(playerID);
+                //gmPlayer.RecordDeath(playerID);
                 //Debug.LogError(playerID);
+
+                otherPlayer.IncrementDeath();
             }
             else
             {
-                Debug.LogError("GameManager instance not found.");
+                Debug.LogError("Player Variables instance not found.");
             }
 
             // Handle player respawn

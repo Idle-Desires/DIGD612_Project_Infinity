@@ -15,18 +15,18 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogColor: {r: 1, g: 1, b: 1, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
+  m_AmbientEquatorColor: {r: 1, g: 1, b: 1, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubtractiveShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_SkyboxMaterial: {fileID: 2100000, guid: c7c5de4278346084fa6c1efe90588b9d, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -35,10 +35,10 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 128
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0.322
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17276844, g: 0.21589246, b: 0.2978263, a: 1}
+  m_IndirectSpecularColor: {r: 0.10608694, g: 0.010871776, b: 0.6583666, a: 0.322}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -719,8 +719,8 @@ Transform:
   m_GameObject: {fileID: 169734827}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.37169853, z: -0, w: 0.9283535}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0551585, y: 181.66376, z: 48.825012}
+  m_LocalPosition: {x: 2.2, y: 0, z: 2.3}
+  m_LocalScale: {x: 1.0551585, y: 181.66376, z: 40.830406}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 581547204}
@@ -878,6 +878,7 @@ GameObject:
   - component: {fileID: 231297178}
   - component: {fileID: 231297177}
   - component: {fileID: 231297176}
+  - component: {fileID: 231297180}
   m_Layer: 0
   m_Name: w
   m_TagString: Untagged
@@ -966,11 +967,28 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -11.199997, y: 0, z: -113.6}
-  m_LocalScale: {x: 1.0551585, y: 181.66376, z: 222.71579}
+  m_LocalScale: {x: 1.0551585, y: 181.66376, z: 203.20366}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 581547204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &231297180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231297175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: b4480257c86d3c946a1d32b25d352e6c, type: 2}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &238662233
 GameObject:
   m_ObjectHideFlags: 0
@@ -2590,14 +2608,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameVersion: 2
   roomName: Test
-  playerID: 0
   playerPrefab: {fileID: 2928945321350816234, guid: 45d1817aea845cc40832b30669cad7e2, type: 3}
-  minX: 0
-  maxX: 0
-  minZ: 0
-  maxZ: 0
-  position: {x: -8, y: 5, z: 56}
-  startRespawnPosition: {x: -8, y: 5, z: 56}
+  playerID: 0
+  spawnPoints: []
+  connectionStatus: Not Connected
 --- !u!4 &712694928
 Transform:
   m_ObjectHideFlags: 0
@@ -6172,7 +6186,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0.75, g: 0.8815303, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -6231,13 +6245,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1609771217}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 90.9, z: 0}
+  m_LocalRotation: {x: 0.7834701, y: -0, z: -0, w: 0.62142956}
+  m_LocalPosition: {x: 0, y: 93.22, z: 42.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 103.159, y: 0, z: 0}
 --- !u!1001 &1633824149
 PrefabInstance:
   m_ObjectHideFlags: 0

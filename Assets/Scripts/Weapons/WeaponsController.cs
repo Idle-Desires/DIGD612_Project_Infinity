@@ -4,15 +4,32 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using UnityEngine.InputSystem.HID;
 
 public class WeaponsController : MonoBehaviour
 {
     //Reference to the input actions created under PlayerInputActions
     private PlayerInputActions inputActions;
-    [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private PlayerVariables playerStats;
 
     private EnemyStats enemy;
-    private PlayerStats otherPlayer;
+    private PlayerVariables otherPlayer;
+    //public GameObject hitVFX;
+
+    [Header("Recoil Settings")]
+    //[Range(0f, 1f)]
+    //public float recoilPercent = 0.3f;
+    [Range(0f, 2f)]
+    public float recoverPercent = 0.7f;
+    [Space]
+    public float recoilUp = 1f;
+    public float recoilBack = 0f;
+    private Vector3 originalPosition;
+    private Vector3 recoilVelocity = Vector3.zero;
+    private bool recoiling;
+    public bool recovering;
+    private float recoilLength;
+    private float recoverLength;
 
     //Type of gun being held
     public string gunName;
@@ -28,7 +45,7 @@ public class WeaponsController : MonoBehaviour
     private bool reload;
 
     //Gun vaiables
-    public float damage = 10f;
+    public int damage = 10; //use to be float
     public float range = 100f;
     public float fireRate = 15f;
     public float impactForce = 5f;
@@ -82,6 +99,10 @@ public class WeaponsController : MonoBehaviour
             //Debug.Log(bulletsLeftInMagazine + " & " + magSize);
             bulletsLeftInMagazine = magSize;
             ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
+
+            originalPosition = transform.localPosition;
+            recoilLength = 0;
+            recoverLength = 1/fireRate * recoverPercent;
 
             // Initialize input actions
             inputActions = new PlayerInputActions();
@@ -138,6 +159,16 @@ public class WeaponsController : MonoBehaviour
         {
             ShootOnce();
         }
+
+        if (recoiling) 
+        { 
+            Recoil();
+        }
+
+        if (recovering)
+        {
+            Recovering();
+        }
     }
 
     // Method to shoot only once when the mouse is clicked
@@ -174,31 +205,46 @@ public class WeaponsController : MonoBehaviour
     //What happens when the player shots the gun
     void Shoot()
     {
-        // Reset currentBullet as we are not using projectiles
-        //currentBullet = null;
-
         bulletsLeftInMagazine--; // Use one bullet from the magazine
+        recoiling = true;
+        recovering = false;
 
-        // If we were previously in projectile mode, destroy the current bullet (to stop it from being in the scene)
-        //if (currentBullet != null)
-        //{
-        //    Destroy(currentBullet);  // Stop any active projectile bullets
-        //}
-
-        // Raycast to detect if we hit something
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out RaycastHit rayHit, range))
         {
+            //PhotonNetwork.Instantiate(hitVFX.name, rayHit.point, Quaternion.identity);
             EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
-            PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
+            //PlayerVariables otherPlayer = rayHit.transform.GetComponent<PlayerVariables>(); //PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
 
             // Apply damage if we hit an enemy or another player
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+                //rayHit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
             }
-            else if (otherPlayer != null)
+            //else if (otherPlayer != null)
+            //{
+            //    otherPlayer.TakeDamage(damage, photonView);
+            //    //rayHit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
+            //}
+
+            ////Damage to other players
+            //if (photonView != null)
+            //{
+            //    PlayerVariables hitPlayerVariables = photonView.GetComponent<PlayerVariables>();
+            //    if (hitPlayerVariables != null)
+            //    {
+            //        hitPlayerVariables.TakeDamage(damage, this.photonView);
+            //    }
+            //}
+
+            PhotonView hitPhotonView = rayHit.collider.GetComponent<PhotonView>();
+            if (hitPhotonView != null && !hitPhotonView.IsMine)
             {
-                otherPlayer.TakeDamage(damage);
+                PlayerVariables hitPlayerVariables = hitPhotonView.GetComponent<PlayerVariables>();
+                if (hitPlayerVariables != null)
+                {
+                    hitPlayerVariables.TakeDamage(damage, this.photonView);
+                }
             }
 
             // Apply impact force if the object has a Rigidbody
@@ -208,14 +254,38 @@ public class WeaponsController : MonoBehaviour
             }
         }
 
-        // Reset currentBullet as we are not using projectiles
-        //currentBullet = null;
+        // Raycast to detect if we hit something
+        //if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out RaycastHit rayHit, range))
+        //{
+        //    EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
+        //    PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
+
+        //    // Apply damage if we hit an enemy or another player
+        //    if (enemy != null)
+        //    {
+        //        enemy.TakeDamage(damage);
+        //    }
+        //    else if (otherPlayer != null)
+        //    {
+        //        otherPlayer.TakeDamage(damage);
+        //    }
+
+        //    // Apply impact force if the object has a Rigidbody
+        //    if (rayHit.rigidbody != null)
+        //    {
+        //        rayHit.rigidbody.AddForce(-rayHit.normal * impactForce);
+        //    }
+        //}
     }
 
     void ProjectileShot()
     {
         ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
         Debug.Log("Projectile Test");
+
+        recoiling = true;
+        recovering = false;
+
         if (currentBullet != null)
         {
             Destroy(currentBullet, 0.5f); // Destroy existing projectile if any
@@ -269,5 +339,31 @@ public class WeaponsController : MonoBehaviour
     void OnCollisionEnter(Collision collision)//for 3D RB add 2D for other rb option
     {
         Destroy(currentBullet, 0.5f);
+    }
+
+    void Recoil()
+    {
+        Vector3 finalPosition = new Vector3(originalPosition.x, originalPosition.y + recoilUp, originalPosition.z - recoilBack);
+
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, finalPosition, ref recoilVelocity, recoilLength);
+
+        if (transform.localPosition == finalPosition)
+        {
+            recoiling = false;
+            recovering = true;
+        }
+    }
+
+    void Recovering()
+    {
+        Vector3 finalPosition = originalPosition;
+
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, finalPosition, ref recoilVelocity, recoverLength);
+
+        if (transform.localPosition == finalPosition)
+        {
+            recoiling = false;
+            recovering = false;
+        }
     }
 }

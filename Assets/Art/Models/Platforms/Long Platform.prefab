@@ -14540,7 +14540,7 @@ GameObject:
   - component: {fileID: 1276439674555952619}
   - component: {fileID: 5431122583902985042}
   - component: {fileID: 6785377909703106393}
-  - component: {fileID: 8686600967830353870}
+  - component: {fileID: 246819913316092993}
   m_Layer: 6
   m_Name: pCube12
   m_TagString: Untagged
@@ -14613,8 +14613,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8686600967830353870
-MeshCollider:
+--- !u!65 &246819913316092993
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -14631,10 +14631,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7434549690534084444, guid: b4a1488e1cde61241a12b7a7d36360fb, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 0.05100018, y: 0.0077717863, z: 0.05098662}
+  m_Center: {x: 0, y: 2.3283067e-10, z: 9.313229e-10}
 --- !u!1 &4255630398969469890
 GameObject:
   m_ObjectHideFlags: 0
@@ -19510,7 +19509,6 @@ GameObject:
   - component: {fileID: 6635053558420948593}
   - component: {fileID: 8663280438678328345}
   - component: {fileID: 5690443494963887957}
-  - component: {fileID: 147956919383549572}
   m_Layer: 6
   m_Name: pCube11
   m_TagString: Untagged
@@ -19583,25 +19581,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &147956919383549572
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8972691032123841658}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 664456749670281567, guid: b4a1488e1cde61241a12b7a7d36360fb, type: 3}

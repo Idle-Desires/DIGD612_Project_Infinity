@@ -4842,7 +4842,6 @@ GameObject:
   - component: {fileID: 5871161460522165335}
   - component: {fileID: 5811707485338645391}
   - component: {fileID: 1123876353655509934}
-  - component: {fileID: 2737345669370496153}
   m_Layer: 6
   m_Name: pasted__pasted__pCube18
   m_TagString: Untagged
@@ -4915,28 +4914,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2737345669370496153
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1833554347579287462}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 6531663098074202209, guid: b4a1488e1cde61241a12b7a7d36360fb, type: 3}
 --- !u!1 &3563315091796673309
 GameObject:
   m_ObjectHideFlags: 0
@@ -14753,7 +14730,6 @@ GameObject:
   - component: {fileID: 7729299701823069427}
   - component: {fileID: 6119711821238793706}
   - component: {fileID: 2660545604882181515}
-  - component: {fileID: 2289159309081874804}
   m_Layer: 6
   m_Name: pasted__pasted__pCube17
   m_TagString: Untagged
@@ -14826,25 +14802,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2289159309081874804
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7500096462002737596}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3768709576322473656, guid: b4a1488e1cde61241a12b7a7d36360fb, type: 3}
