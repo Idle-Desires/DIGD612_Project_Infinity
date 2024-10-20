@@ -41,11 +41,9 @@ public class PlayerController : MonoBehaviour
 
     //Camera references
     private Transform cameraTransform;
-    //private Camera playerCamera;
     private float cameraVertical = 0f;  //Vertical rotation
     private float cameraHorizontal = 0f;    //Horizontal rotation
     public GameObject playerCam; //[SerializeField]
-    //public GameObject weaponHolder;
 
     //Specify what the ground layer is for the items in inspector view and a layermask
     [SerializeField] private bool isGrounded;
@@ -67,10 +65,8 @@ public class PlayerController : MonoBehaviour
 
     //Multiplayer values
     PhotonView photonView;
-    //public TextMeshProUGUI healthDisplay;
     private int playerID; // Player's unique ID
-    //private float playerHealth = 50f; // Variable to store the player's health
-    public GameObject scoreboardUI;
+    //public GameObject scoreboardUI;
 
     //Grapple Variables
     public bool freeze;
@@ -90,15 +86,6 @@ public class PlayerController : MonoBehaviour
             collider = GetComponent<CapsuleCollider>();
             playerCam.SetActive(true);
             playerID = photonView.Owner.ActorNumber;
-            //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
-
-            // Optionally, initialize player's health from the GameManager
-            //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
-
-            // Set initial health display
-            //UpdateHealthDisplay();
-
-            //healthDisplay.SetText("Health: " + playerHealth.ToString());
 
             //Locking camera
             Cursor.lockState = CursorLockMode.Locked; //Middle of screen lock
@@ -121,10 +108,6 @@ public class PlayerController : MonoBehaviour
             //Crouch input
             inputActions.Player.Crouch.performed += ctx => crouch = true;
             inputActions.Player.Crouch.canceled += ctx => crouch = false;
-
-            //Crouch input
-            //inputActions.Player.Scoreboard.performed += ctx => scoreboard = true;
-            //inputActions.Player.Scoreboard.canceled += ctx => scoreboard = false;
         }
         else
         {
@@ -150,12 +133,6 @@ public class PlayerController : MonoBehaviour
         Move();
         SpeedControl();
         Look();
-
-        // Update playerHealth during gameplay
-        //playerHealth = GameManager.instance.GetPlayerHealth(playerID);
-
-        // Update the UI text to display the player's health
-        //UpdateHealthDisplay();
 
         if (freeze) //freeze whilst grappling
         {
@@ -191,18 +168,6 @@ public class PlayerController : MonoBehaviour
                 Invoke(nameof(ResetJump), jumpCooldown);
             }
         }
-
-        //// Handle sliding: only trigger when the player starts crouching WHILE moving
-        //if (move != Vector2.zero && crouch && !isCrouching && canSlide && !isSliding)
-        //{
-        //    // Start sliding if player is moving and crouch is pressed
-        //    StartCoroutine(Slide());
-        //}
-        //else if (crouch && move == Vector2.zero && !isSliding)
-        //{
-        //    // If crouching but not moving, just crouch (no slide)
-        //    HandleCrouch();
-        //}
 
         if(move != Vector2.zero && crouch && !isCrouching && canSlide && !isSliding)
         {
@@ -280,9 +245,6 @@ public class PlayerController : MonoBehaviour
         }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
-        //Debug.Log(moveSpeed);
-        //Debug.Log(lastDesiredMoveSpeed);
-        //Debug.Log(desiredMoveSpeed);
     }
 
     private float speedChangeFactor;
@@ -416,24 +378,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-    //public void TakeDamage(float damageAmount)
-    //{
-    //    GameManager.instance.TakeDamage(playerID, damageAmount);
-    //}
-
-    // Method to update the health display text
-    //public void UpdateHealthDisplay()
-    //{
-    //    if (healthDisplay != null)
-    //    {
-    //        healthDisplay.SetText("Health: " + playerHealth.ToString());
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("Health display UI component is not assigned!");
-    //    }
-    //}
 
     private bool enableMovementOnNextTouch;
     public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight)

@@ -6,6 +6,9 @@ public class MultiGameManager : MonoBehaviourPunCallbacks
 {
     public static MultiGameManager Instance;
 
+    public int kills = 0;
+    public int deaths = 0;
+
     [Header("Respawn Settings")]
     public Transform[] respawnPoints;
 

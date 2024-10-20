@@ -533,7 +533,6 @@ GameObject:
   - component: {fileID: 7710679406655709048}
   - component: {fileID: 6845379928777952276}
   - component: {fileID: -5074261082287521418}
-  - component: {fileID: 1683230152204706285}
   m_Layer: 7
   m_Name: Player Gravity 1
   m_TagString: Player
@@ -656,9 +655,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &802955616144702993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +692,6 @@ MonoBehaviour:
   slideDuration: 1
   slideCooldown: 1
   slideSpeedThreshold: 3
-  scoreboardUI: {fileID: 0}
   freeze: 0
   activeGrapple: 0
 --- !u!114 &-5502993288313374914
@@ -843,23 +841,11 @@ MonoBehaviour:
   nicknameText: {fileID: 7746932061671508669}
   kills: 0
   deaths: 0
+  damage: 10
   playerNumber: 0
   maxHealth: 50
   currentHealth: 0
   healthDisplay: {fileID: 6359089942503826583}
---- !u!114 &1683230152204706285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2928945321350816234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c7afd8748beed8419084a5a67a38aa6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthText: {fileID: 6359089942503826583}
 --- !u!1 &3307071094408430184
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +967,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: -5074261082287521418}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4992
+  hitVFX: {fileID: 0}
   recoverPercent: 0.7
   recoilUp: 0.02
   recoilBack: 0.05
@@ -989,6 +979,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
   bulletSpawnPoint: {fileID: 6394422773959911758}
   bulletSpeed: 20
+  shooterViewID: 0
   damage: 10
   range: 100
   fireRate: 15
@@ -1142,6 +1133,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: -5074261082287521418}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4992
+  hitVFX: {fileID: 6497500670410238151}
   recoverPercent: 0.7
   recoilUp: 0.02
   recoilBack: 0.05
@@ -1150,6 +1145,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7711941568902034287, guid: 5689fffb82c32e744a024ccc6c84d46e, type: 3}
   bulletSpawnPoint: {fileID: 6394422773959911758}
   bulletSpeed: 20
+  shooterViewID: 0
   damage: 10
   range: 100
   fireRate: 15
@@ -1208,7 +1204,7 @@ Transform:
   m_GameObject: {fileID: 3946816390075046930}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.35, z: 0.5}
+  m_LocalPosition: {x: 0, y: -0.35, z: 1.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

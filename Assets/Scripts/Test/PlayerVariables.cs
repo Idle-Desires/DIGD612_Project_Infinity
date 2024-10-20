@@ -19,9 +19,12 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     // Player statistics
     public int kills = 0;
     public int deaths = 0;
+    public int damage = 10;
 
     // Player number assigned upon joining
     public int playerNumber;
+
+    private Rigidbody playerRb;
 
     [Header("Health Settings")]
     [Tooltip("Maximum health of the player.")]
@@ -46,23 +49,23 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     public delegate void OnPlayerDied();
     public event OnPlayerDied PlayerDied;
 
+    //PhotonView photonView;
+
     /// <summary>
     /// Initializes player variables based on ownership and synchronizes them.
     /// </summary>
     private void Start()
     {
+        //photonView = GetComponent<PhotonView>();
+
         if (photonView.IsMine)
         {
-            //// The local player sets their own name based on PhotonNetwork.NickName
-            //playerName = PhotonNetwork.NickName;
-            //Debug.Log($"[Owner] PlayerVariables Initialized: {playerName}");
-
-            //// Initialize health
-            //currentHealth = maxHealth;
-            //UpdateHealthDisplay();
             // The local player sets their own name based on PhotonNetwork.NickName
             playerName = PhotonNetwork.NickName;
             Debug.Log($"[Owner] PlayerVariables Initialized: {playerName}");
+            playerRb = GetComponent<Rigidbody>();
+
+            playerNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
             // Initialize health
             currentHealth = maxHealth;
@@ -73,24 +76,8 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            //// For non-local players, retrieve the player number from custom properties
-            //if (photonView.Owner.CustomProperties.ContainsKey("PlayerNumber"))
-            //{
-            //    playerNumber = (int)photonView.Owner.CustomProperties["PlayerNumber"];
-            //    playerName = $"Player {playerNumber}";
-            //    Debug.Log($"[Non-Owner] PlayerVariables Initialized: {playerName}");
-            //}
-            //else
-            //{
-            //    playerName = "Unknown Player";
-            //    Debug.LogWarning($"[Non-Owner] PlayerVariables Initialized with Unknown Name for Actor {photonView.Owner.ActorNumber}");
-            //}
             // For non-local players, retrieve the player number and stats from custom properties
             RetrieveRemotePlayerData();
-
-            // Initialize health
-            //currentHealth = maxHealth;
-            //UpdateHealthDisplay();
         }
     }
 
@@ -99,7 +86,8 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
         Hashtable initialStats = new Hashtable
         {
             { "Kills", kills },
-            { "Deaths", deaths }
+            { "Deaths", deaths },
+            { "PlayerNumber", playerNumber } //new add
         };
         PhotonNetwork.LocalPlayer.SetCustomProperties(initialStats);
     }
@@ -119,12 +107,13 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
             Debug.LogWarning($"[Non-Owner] PlayerVariables Initialized with Unknown Name for Actor {photonView.Owner.ActorNumber}");
         }
 
-        // Retrieve kills and deaths from custom properties
+        // Retrieve kills from custom properties
         if (photonView.Owner.CustomProperties.ContainsKey("Kills"))
         {
             kills = (int)photonView.Owner.CustomProperties["Kills"];
         }
 
+        // Retrieve deaths from custom properties
         if (photonView.Owner.CustomProperties.ContainsKey("Deaths"))
         {
             deaths = (int)photonView.Owner.CustomProperties["Deaths"];
@@ -141,20 +130,8 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="targetPlayer">The player whose properties were updated.</param>
     /// <param name="changedProps">The properties that were changed.</param>
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        //base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-
-        //// Check if the updated player is this player and if "PlayerNumber" was changed
-        //if (targetPlayer == photonView.Owner && changedProps.ContainsKey("PlayerNumber"))
-        //{
-        //    playerNumber = (int)changedProps["PlayerNumber"];
-        //    playerName = $"Player {playerNumber}";
-        //    Debug.Log($"[OnPlayerPropertiesUpdate] PlayerNumber updated: {playerNumber}, PlayerName updated: {playerName}");
-
-        //    // Update health display if necessary
-        //    UpdateHealthDisplay();
-        //}
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
 
         if (targetPlayer != photonView.Owner)
@@ -219,11 +196,18 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     /// <param name="attackerView">PhotonView of the attacking player.</param>
     public void TakeDamage(int damage, PhotonView attackerView)
     {
-        if (!photonView.IsMine)
-            return;
+        if (photonView.IsMine)
+        {
+            photonView.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+        }
+        //if (!photonView.IsMine)
+        //    return;
 
-        // Invoke RPC to handle damage on all clients
-        photonView.RPC("RPC_TakeDamage", RpcTarget.All, damage, attackerView.ViewID);
+        //Debug.Log(damage + "taken");
+
+        //// Invoke RPC to handle damage on all clients
+        //photonView.RPC(nameof(RPC_TakeDamage), RpcTarget.All, damage, attackerView.ViewID);
+        //photonView.RPC("RPC_TakeDamage", RpcTarget.AllBuffered, damage);
     }
 
     /// <summary>
@@ -231,36 +215,61 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     /// </summary>
     /// <param name="damage">Amount of damage taken.</param>
     /// <param name="attackerViewID">ViewID of the attacker.</param>
+    /// 
     [PunRPC]
-    void RPC_TakeDamage(int damage, int attackerViewID)
+    void RPC_TakeDamage(int damage, int attackerViewID) // void RPC_TakeDamage(int damage, int attackerViewID, PhotonMessageInfo info)
     {
-        //Debug.Log(currentHealth);
-        //currentHealth -= damage;
-        //Debug.Log(currentHealth);
-        //UpdateHealthDisplay();
+        if (!photonView.IsMine)
+            return;
 
-        //if (currentHealth <= 0)
-        //{
-        //    HandleDeath(attackerViewID);
-        //    Debug.Log("DEATH");
-        //}
+        Debug.Log(playerName + "is processing RPC_TakeDamage with damage:" + damage);
 
-        //Debug.Log($"{playerName} took {damage} damage. Current Health: {currentHealth}");
-        Debug.Log($"{playerName} is taking {damage} damage.");
+        PhotonView attackerPV = PhotonView.Find(attackerViewID);
+        Debug.Log(attackerPV);
+        if (attackerPV == null)
+        {
+            Debug.LogWarning($"Attacker PhotonView with ViewID {attackerViewID} not found.");
+            return;
+        }
 
+        PlayerVariables attackerStats = attackerPV.GetComponent<PlayerVariables>();
+        if (attackerStats == null)
+        {
+            Debug.LogWarning($"PlayerVariables not found on attacker PhotonView {attackerViewID}");
+            return;
+        }
+
+        // Apply damage
         currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        //currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHealthDisplay();
-
-        // Notify any listeners about the health change
         HealthChanged?.Invoke(currentHealth);
+        Debug.Log(playerName + "took " + damage + "damage. Current Health:" + currentHealth);
 
-        Debug.Log($"{playerName} took {damage} damage. Current Health: {currentHealth}");
-
+        // Check if the player's health has dropped to zero or below
         if (currentHealth <= 0)
         {
-            HandleDeath(attackerViewID);
+            HandleDeath(attackerPV);
             Debug.Log($"{playerName} has died.");
+        }
+    }
+    [PunRPC]
+    public void Damage(int damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0f)
+        {
+            // Increment this player's death count via CustomProperties
+            IncrementDeath();
+
+            // Trigger death event
+            PlayerDied?.Invoke();
+
+            // Respawn the player
+            Respawn();
+
+            IncrementKill();
         }
     }
 
@@ -268,38 +277,9 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     /// Handles player death: increments kill and death counts, updates scoreboard, and respawns the player.
     /// </summary>
     /// <param name="attackerViewID">ViewID of the attacking player.</param>
-    void HandleDeath(int attackerViewID)
+
+    void HandleDeath(PhotonView attackerPV)
     {
-        //Debug.Log($"{playerName} has died.");
-
-        //// Find the attacker's PhotonView using the ViewID
-        //PhotonView attackerPV = PhotonView.Find(attackerViewID);
-        //if (attackerPV != null)
-        //{
-        //    PlayerVariables attackerStats = attackerPV.GetComponent<PlayerVariables>();
-        //    if (attackerStats != null)
-        //    {
-        //        // Increment attacker's kill count via RPC
-        //        attackerStats.photonView.RPC("RPC_AddKill", RpcTarget.AllBuffered);
-        //        Debug.Log($"{attackerStats.playerName} killed {playerName}");
-        //    }
-        //    else
-        //    {
-        //        Debug.LogWarning($"PlayerVariables not found on attacker PhotonView {attackerViewID}");
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.LogWarning($"PhotonView with ViewID {attackerViewID} not found.");
-        //}
-
-        //// Increment this player's death count via RPC
-        //photonView.RPC("RPC_AddDeath", RpcTarget.AllBuffered);
-
-        //// Respawn the player
-        //Respawn();
-        // Find the attacker's PhotonView using the ViewID
-        PhotonView attackerPV = PhotonView.Find(attackerViewID);
         if (attackerPV != null)
         {
             PlayerVariables attackerStats = attackerPV.GetComponent<PlayerVariables>();
@@ -311,12 +291,12 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
             }
             else
             {
-                Debug.LogWarning($"PlayerVariables not found on attacker PhotonView {attackerViewID}");
+                Debug.LogWarning($"PlayerVariables not found on attacker PhotonView {attackerPV.ViewID}");
             }
         }
         else
         {
-            Debug.LogWarning($"PhotonView with ViewID {attackerViewID} not found.");
+            Debug.LogWarning("Attacker PhotonView is null. Cannot increment kill count.");
         }
 
         // Increment this player's death count via CustomProperties
@@ -329,49 +309,9 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
         Respawn();
     }
 
-    /// <summary>
-    /// RPC to increment the player's kill count and update the scoreboard.
-    /// </summary>
-    //[PunRPC]
-    //void RPC_AddKill()
-    //{
-    //    kills++;
-    //    Debug.Log($"{playerName} now has {kills} kills.");
-
-    //    // Update the scoreboard
-    //    if (ScoreboardController.Instance != null)
-    //    {
-    //        ScoreboardController.Instance.UpdateScoreboard();
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("ScoreboardController Instance is null.");
-    //    }
-    //}
-
-    ///// <summary>
-    ///// RPC to increment the player's death count and update the scoreboard.
-    ///// </summary>
-    //[PunRPC]
-    //public void RPC_AddDeath()
-    //{
-    //    deaths++;
-    //    Debug.Log($"{playerName} now has {deaths} deaths.");
-
-    //    // Update the scoreboard
-    //    if (ScoreboardController.Instance != null)
-    //    {
-    //        ScoreboardController.Instance.UpdateScoreboard();
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("ScoreboardController Instance is null.");
-    //    }
-    //}
-
     public void IncrementKill()
     {
-        if (photonView.IsMine)
+        if (!photonView.IsMine)
         {
             kills++;
             Hashtable props = new Hashtable { { "Kills", kills } };
@@ -385,7 +325,7 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
 
     public void IncrementDeath()
     {
-        if (photonView.IsMine)
+        if (!photonView.IsMine)
         {
             deaths++;
             Hashtable props = new Hashtable { { "Deaths", deaths } };
@@ -412,20 +352,20 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
     private System.Collections.IEnumerator RespawnCoroutine()
     {
         // Disable the player object (e.g., hide or deactivate the player)
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        currentHealth = maxHealth;
 
         // Wait for a few seconds before respawning
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         // Reset health
-        currentHealth = maxHealth;
         UpdateHealthDisplay();
 
         // Move to a spawn point
         NetworkManager.nmInstance.RespawnPlayer(photonView);
 
         // Re-enable the player object
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
 
         Debug.Log($"{playerName} has respawned.");
     }
@@ -438,16 +378,6 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
             healthDisplay.text = $"Health: {currentHealth}/{maxHealth}";
         }
     }
-
-    //[PunRPC]
-    //public void SetNickname(string name)
-    //{
-    //    playerName = name;
-    //    Debug.Log("Set Nickname Player Name " +  playerName);
-
-    //    nicknameText.text = playerName;
-    //    Debug.Log(playerName);
-    //}
 
     private void UpdateNicknameDisplay()
     {
@@ -468,5 +398,31 @@ public class PlayerVariables : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("Set Nickname Player Name: " + playerName);
 
         UpdateNicknameDisplay();
+    }
+
+    void OnCollisionEnter(Collision collision) //Was private
+    {
+        //if (collision.gameObject.CompareTag("Bullet"))
+        //{
+        //    TakeDamage(damage, photonView);
+        //    Debug.Log(photonView);
+        //    Debug.Log("Shooting damage");
+        //}
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            // Get the PhotonView from the bullet
+            PhotonView bulletPhotonView = collision.gameObject.GetComponent<PhotonView>();
+            if (bulletPhotonView != null)
+            {
+                // Call the TakeDamage method with the damage amount and the attacker's PhotonView
+                //TakeDamage(damage, bulletPhotonView);
+                //Debug.Log($"Damage applied by {bulletPhotonView.Owner.NickName}");
+                Damage(damage);
+            }
+            else
+            {
+                Debug.LogWarning("Bullet does not have a PhotonView attached.");
+            }
+        }
     }
 }
