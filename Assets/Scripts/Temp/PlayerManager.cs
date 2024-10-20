@@ -8,6 +8,7 @@ using System.IO;
 
 public class PlayerManager : MonoBehaviour
 {
+    internal object PV;
     PhotonView photonView;
 
     GameObject controller;

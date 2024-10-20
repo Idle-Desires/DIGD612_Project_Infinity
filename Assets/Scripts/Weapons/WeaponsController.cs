@@ -8,17 +8,17 @@ using UnityEngine.InputSystem.HID;
 
 public class WeaponsController : MonoBehaviour
 {
-    //Reference to the input actions created under PlayerInputActions
+    // Reference to the input actions created under PlayerInputActions
     private PlayerInputActions inputActions;
-    [SerializeField] private PlayerVariables playerStats;
+
+    [SerializeField] private PlayerVariables playerStats; // Assign via Inspector
+    public LayerMask hitLayers;
 
     private EnemyStats enemy;
     private PlayerVariables otherPlayer;
-    //public GameObject hitVFX;
+    public GameObject hitVFX;
 
     [Header("Recoil Settings")]
-    //[Range(0f, 1f)]
-    //public float recoilPercent = 0.3f;
     [Range(0f, 2f)]
     public float recoverPercent = 0.7f;
     [Space]
@@ -39,6 +39,7 @@ public class WeaponsController : MonoBehaviour
     public GameObject bulletPrefab;    // The bullet prefab
     public Transform bulletSpawnPoint; // The point where bullets will spawn
     public float bulletSpeed = 60f;    // Speed of the bullet
+    public int shooterViewID;
 
     //Input
     private bool attack;
@@ -51,14 +52,6 @@ public class WeaponsController : MonoBehaviour
     public float impactForce = 5f;
     private float nextTimeToFire = 0f;
 
-    //Gun variables
-    //public int bulletsPerShot; //bullets per tap of the mouse or attack button
-    //public float timeBetweenShooting;
-    //public float reloadTime = 1f; 
-    //public float timeBetweenShots;
-    //public int bulletsLeft;
-    //int bulletsShot;
-
     // Magazine system variables
     public int magSize = 20;  // Number of bullets per magazine
     public int ammoTotal = 60;     // Total number of bullets player has
@@ -70,22 +63,18 @@ public class WeaponsController : MonoBehaviour
 
     //Booleans to determine true or false settings
     bool shooting;
-    // Shooting mode tracking
-    //private ShootingMode currentShootingMode; // Track the current shooting mode
 
     //References to other game objects in the scene
     public RaycastHit rayHit;
+    public enum ShootingMode { HitScan, Projectile }
+    private ShootingMode currentShootingMode;  // Track the current shooting mode
 
     //Graphics
     public TextMeshProUGUI ammoDisplay;
-    //public TextMeshProUGUI deathDisplay;
 
     //Camera
     public Camera fpsCam;
     PhotonView photonView;
-
-    public enum ShootingMode { HitScan, Projectile }
-    private ShootingMode currentShootingMode;  // Track the current shooting mode
 
     //Initialize at the start of the game
     private void Awake()
@@ -95,23 +84,24 @@ public class WeaponsController : MonoBehaviour
 
         if (photonView.IsMine)
         {
+            //Initialize ammo
             ammoTotal = 60;
-            //Debug.Log(bulletsLeftInMagazine + " & " + magSize);
             bulletsLeftInMagazine = magSize;
-            ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
+            UpdateAmmoDisplay();
 
+            //Store the original position of the gun for recoil calculations
             originalPosition = transform.localPosition;
             recoilLength = 0;
-            recoverLength = 1/fireRate * recoverPercent;
+            recoverLength = 1 / fireRate * recoverPercent;
 
-            // Initialize input actions
+            //Initialize input actions
             inputActions = new PlayerInputActions();
 
-            // Attack input mapped to single-shot shooting
+            //Map attack input for shooting
             inputActions.Player.Attack.performed += ctx => attack = true;
             inputActions.Player.Attack.canceled += ctx => attack = false;
 
-            // Reload input
+            //Map reload input
             inputActions.Player.Reload.performed += ctx => Reload();
         }
         else
@@ -123,45 +113,53 @@ public class WeaponsController : MonoBehaviour
     private void OnEnable()
     {
         // Enable the Player input action map
-        inputActions.Player.Enable();
+        if (inputActions != null)
+        {
+            inputActions.Player.Enable();
+        }
         reloading = false;
     }
 
-    //private void OnDisable()
-    //{
-    //    // Disable the Player input action map
-    //    inputActions.Player.Disable();
-    //}
+    private void OnDisable()
+    {
+        // Disable the Player input action map
+        if (inputActions != null)
+        {
+            inputActions.Player.Disable();
+        }
+    }
 
     //Checking states for shooting or reloading the gun
-   public void Update()
+    public void Update()
     {
-        //Set ammo display 
+        if (!photonView.IsMine) return; //Only allow the local player to control shooting
+
+        //Update ammo display on UI
         if (ammoDisplay != null)
         {
-            ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
+            UpdateAmmoDisplay();
         }
 
-        // Check for reload input and magazine state
+        //Check for reload input and magazine state
         if (reload && bulletsLeftInMagazine < magSize && !reloading)
         {
             Reload();
             return;
         }
 
-        // Automatically reload if magazine is empty and player still has ammo
+        //Automatically reload if magazine is empty and player still has ammo
         if (bulletsLeftInMagazine == 0 && ammoTotal > 0 && !reloading)
         {
             Reload();
         }
 
-        if(attack == true)
+        if (attack)
         {
             ShootOnce();
         }
 
-        if (recoiling) 
-        { 
+        if (recoiling)
+        {
             Recoil();
         }
 
@@ -169,6 +167,12 @@ public class WeaponsController : MonoBehaviour
         {
             Recovering();
         }
+    }
+
+    // Method to update ammo display
+    private void UpdateAmmoDisplay()
+    {
+        ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
     }
 
     // Method to shoot only once when the mouse is clicked
@@ -209,78 +213,44 @@ public class WeaponsController : MonoBehaviour
         recoiling = true;
         recovering = false;
 
+        // Raycast from the camera to simulate bullet travel
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out RaycastHit rayHit, range))
         {
-            //PhotonNetwork.Instantiate(hitVFX.name, rayHit.point, Quaternion.identity);
-            EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
-            //PlayerVariables otherPlayer = rayHit.transform.GetComponent<PlayerVariables>(); //PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
+            Debug.Log($"Raycast hit: {rayHit.collider.gameObject.name}");
 
-            // Apply damage if we hit an enemy or another player
+            // Check if the hit object has an EnemyStats component and apply damage
+            EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-                //rayHit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
+                Debug.Log($"Hit Enemy: {rayHit.transform.name}, Damage: {damage}");
             }
-            //else if (otherPlayer != null)
-            //{
-            //    otherPlayer.TakeDamage(damage, photonView);
-            //    //rayHit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
-            //}
 
-            ////Damage to other players
-            //if (photonView != null)
-            //{
-            //    PlayerVariables hitPlayerVariables = photonView.GetComponent<PlayerVariables>();
-            //    if (hitPlayerVariables != null)
-            //    {
-            //        hitPlayerVariables.TakeDamage(damage, this.photonView);
-            //    }
-            //}
+            Debug.Log("Hit: " + rayHit.collider.gameObject.name);
 
-            PhotonView hitPhotonView = rayHit.collider.GetComponent<PhotonView>();
-            if (hitPhotonView != null && !hitPhotonView.IsMine)
+            PlayerVariables player = rayHit.transform.GetComponent<PlayerVariables>();
+            if (player != null)
             {
-                PlayerVariables hitPlayerVariables = hitPhotonView.GetComponent<PlayerVariables>();
-                if (hitPlayerVariables != null)
-                {
-                    hitPlayerVariables.TakeDamage(damage, this.photonView);
-                }
+                player.Damage(damage);
+                Debug.Log("Player Hit");
             }
 
-            // Apply impact force if the object has a Rigidbody
+            // Apply impact force if the hit object has a Rigidbody
             if (rayHit.rigidbody != null)
             {
                 rayHit.rigidbody.AddForce(-rayHit.normal * impactForce);
+                Debug.Log($"Applied impact force to: {rayHit.collider.gameObject.name}");
             }
         }
-
-        // Raycast to detect if we hit something
-        //if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out RaycastHit rayHit, range))
-        //{
-        //    EnemyStats enemy = rayHit.transform.GetComponent<EnemyStats>();
-        //    PlayerStats otherPlayer = rayHit.transform.GetComponent<PlayerStats>();
-
-        //    // Apply damage if we hit an enemy or another player
-        //    if (enemy != null)
-        //    {
-        //        enemy.TakeDamage(damage);
-        //    }
-        //    else if (otherPlayer != null)
-        //    {
-        //        otherPlayer.TakeDamage(damage);
-        //    }
-
-        //    // Apply impact force if the object has a Rigidbody
-        //    if (rayHit.rigidbody != null)
-        //    {
-        //        rayHit.rigidbody.AddForce(-rayHit.normal * impactForce);
-        //    }
-        //}
+        else
+        {
+            Debug.Log("Raycast did not hit any object.");
+        }
     }
 
     void ProjectileShot()
     {
-        ammoDisplay.SetText("(" + bulletsLeftInMagazine + " / " + magSize + ") " + ammoTotal);
+        UpdateAmmoDisplay();
         Debug.Log("Projectile Test");
 
         recoiling = true;
@@ -288,7 +258,8 @@ public class WeaponsController : MonoBehaviour
 
         if (currentBullet != null)
         {
-            Destroy(currentBullet, 0.5f); // Destroy existing projectile if any
+            //PhotonNetwork.Destroy(currentBullet);
+            Destroy(currentBullet, 0.5f);
         }
 
         bulletsLeftInMagazine--; // Use one bullet from the magazine
@@ -302,6 +273,10 @@ public class WeaponsController : MonoBehaviour
         {
             rb.AddForce(bulletSpawnPoint.forward * bulletSpeed, ForceMode.Impulse);
         }
+        else
+        {
+            Debug.LogWarning("Projectile does not have a Rigidbody component.");
+        }
     }
 
     //Changes the state and calls method to reset variables
@@ -310,6 +285,7 @@ public class WeaponsController : MonoBehaviour
         if (ammoTotal > 0 && !reloading) // Check if player has enough ammo to reload
         {
             reloading = true;
+            Debug.Log("Reloading...");
             Invoke("ReloadFinished", reloadTime);  // Delay reloading to simulate reload time
         }
     }
@@ -335,10 +311,10 @@ public class WeaponsController : MonoBehaviour
         reloading = false;  // Reloading is complete
     }
 
-    //If the bullet hits anything with a RB it will be destroyed
-    void OnCollisionEnter(Collision collision)//for 3D RB add 2D for other rb option
+    // Method to set the shooter’s PhotonView ID
+    public void SetShooter(int viewID)
     {
-        Destroy(currentBullet, 0.5f);
+        shooterViewID = viewID;
     }
 
     void Recoil()
@@ -364,6 +340,26 @@ public class WeaponsController : MonoBehaviour
         {
             recoiling = false;
             recovering = false;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PhotonView targetView = collision.gameObject.GetComponent<PhotonView>();
+            if (targetView != null && targetView.IsMine)
+            {
+                PlayerVariables targetVariables = collision.gameObject.GetComponent<PlayerVariables>();
+                if (targetVariables != null)
+                {
+                    targetVariables.TakeDamage(damage, PhotonView.Find(this.GetComponent<PhotonView>().ViewID));
+                    Debug.Log("Projectile hit a player and dealt damage.");
+                }
+            }
+
+            // Destroy the projectile after impact
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }

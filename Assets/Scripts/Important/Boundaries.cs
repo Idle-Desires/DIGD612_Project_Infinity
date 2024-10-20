@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class Boundaries : MonoBehaviour
     public LayerMask groundLayer;
 
     [SerializeField] public PlayerVariables otherPlayer;
+    public MultiGameManager mgManager;
+    PhotonView photonView;
 
     //Player ID
     public int playerID;
@@ -23,24 +26,23 @@ public class Boundaries : MonoBehaviour
 
             Rigidbody playerRb = other.GetComponent<Rigidbody>();
             PlayerController playerControls = other.GetComponent<PlayerController>();
+            MultiGameManager mgManager = other.GetComponent<MultiGameManager>();
+            photonView = GetComponent<PhotonView>();
 
-            // Get the GameManager instance
-            //GameManager gmPlayer = GameManager.instance;
-            //otherPlayer = PlayerVariables.pvInstance;
+            // Get the Player instance
             otherPlayer = other.GetComponent<PlayerVariables>();
 
             if (otherPlayer != null)
             {
                 // Increase the player's death count
-                //gmPlayer.RecordDeath(playerID);
-                //Debug.LogError(playerID);
-
                 otherPlayer.IncrementDeath();
             }
             else
             {
                 Debug.LogError("Player Variables instance not found.");
             }
+
+            //mgManager.RespawnPlayer(this.photonView);
 
             // Handle player respawn
             float raycastDistance = 0.65f;

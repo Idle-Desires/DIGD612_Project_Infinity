@@ -50,9 +50,6 @@ public class PlayerStats : MonoBehaviour
         //Decreasing health
         playerHealth -= damage;
 
-        //healthDisplay.text = playerHealth.ToString();
-        //playerController.healthDisplay.text = playerHealth.ToString();
-
         //playerController.UpdateHealthDisplay();
 
         Debug.Log(playerHealth);
