@@ -4,5 +4,23 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/MenuScene.unity
+    guid: e8d76cb6936bf4344b63bbef31779d14
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/CharacterSelection.unity
+    guid: 612a6dda849ebfb4cb60e3a002d14344
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/Test-AstralSky.unity
+    guid: 3f4770487f6e6c9438cde770188401ee
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/SimonArena.unity
+    guid: 36a3a59275cf8764ea18b7ea8ba98c67
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/Arena.unity
+    guid: 7a1d683d862324f43a5a7f2fa8ed5152
+  - enabled: 1
+    path: Assets/Scenes/FinalScenes/GameOver.unity
+    guid: b75e9680aae24a04dac81290942eb5a8
   m_configObjects: {}

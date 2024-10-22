@@ -7,6 +7,9 @@ public class MainMenu : MonoBehaviour
 {
     //Name of the scene you want to load
     public string sceneToLoad;
+    public string characterSelect = "none";
+    public string sceneSelect = "none";
+    public GameObject error;
 
     public void StartGame()
     {
@@ -23,12 +26,29 @@ public class MainMenu : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-        
+    }
+
+    public void CharacterSelection(string character)
+    {
+        characterSelect = character;
+    }
+
+    public void SceneSelection(string scene)
+    {
+        sceneSelect = scene;
+        sceneToLoad = sceneSelect;
     }
 
     public void LockIn()
     {
-        SceneManager.LoadScene("Arena");
+        if (characterSelect != "none" && sceneSelect != "none")
+        {
+            SceneManager.LoadScene(sceneToLoad);
+        }
+        else
+        {
+            error.SetActive(true);
+        }
     }
 
     public void Options()
