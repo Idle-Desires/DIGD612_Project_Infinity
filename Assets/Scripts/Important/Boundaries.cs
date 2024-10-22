@@ -55,7 +55,7 @@ public class Boundaries : MonoBehaviour
                 respawnPosition.y = hit.point.y + respawnOffsetY;
             }
 
-            // Set player's position to the respawn location
+            //Set player's position to the respawn location
             other.transform.position = respawnPosition;
         }
     }

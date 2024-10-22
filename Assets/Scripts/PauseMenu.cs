@@ -46,8 +46,7 @@ public class PauseMenu : MonoBehaviour
 
     void Resume()
     {
-        pauseMenuUI.SetActive(false); // Hide the pause menu UI
-        //Time.timeScale = 1f; // Resume game time
+        pauseMenuUI.SetActive(false); //Hide the pause menu UI
         GameIsPaused = false;
 
         // Optionally lock and hide the cursor again after resuming
@@ -68,14 +67,11 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMenu()
     {
-        Debug.Log("Load Menu");
-        // You can add code to load the menu scene here
-        // SceneManager.LoadScene(sceneLoad);
+        SceneManager.LoadScene(sceneLoad);
     }
 
     public void QuitGame()
     {
-        Debug.Log("Quit Game");
         Application.Quit(); // Quit the application
     }
 }
